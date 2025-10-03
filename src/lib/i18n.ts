@@ -34,6 +34,26 @@ const resources = {
       features: {
         title: 'What We Build',
         subtitle: 'Six core services that transform your digital presence',
+        aiAssistants: {
+          title: 'AI Assistants & Chatbots',
+          description: 'Intelligent conversational AI that engages visitors, qualifies leads, and provides 24/7 customer support with voice and text capabilities.',
+          cta: 'Learn More'
+        },
+        customSoftware: {
+          title: 'Custom Software Development',
+          description: 'Tailored enterprise solutions built with cutting-edge technologies to automate workflows and scale your operations efficiently.',
+          cta: 'Learn More'
+        },
+        forgeOrion: {
+          title: 'ForgeOrion AI Platform',
+          description: 'Our proprietary AI-powered platform that combines SEO optimization, content generation, and predictive analytics for exponential growth.',
+          cta: 'Learn More'
+        },
+        guarantee: {
+          title: 'Results Guarantee',
+          description: 'We stand behind our work with measurable KPIs and guaranteed results. If we don\'t deliver, you don\'t pay — simple as that.',
+          cta: 'Learn More'
+        },
         aiSEO: {
           title: 'AI SEO & LLM Rankings',
           description: 'We optimize for Google\'s AI insights and ChatGPT-style results so your brand shows up where modern searchers ask questions.',
@@ -226,6 +246,194 @@ const resources = {
           whatsapp: 'Chat with our AI — Get a Quick Quote',
           audit: 'Get Free Audit'
         }
+      }
+    }
+  },
+  es: {
+    translation: {
+      nav: {
+        home: 'Inicio',
+        features: 'Características',
+        portfolio: 'Portafolio',
+        about: 'Acerca de',
+        blog: 'Blog',
+        contact: 'Contacto',
+        help: 'Ayuda',
+        getStarted: 'Auditoría Gratis'
+      },
+      hero: {
+        ctaAI: 'Obtener Auditoría AI Gratis',
+        ctaCall: 'Reservar Demo (WhatsApp)'
+      },
+      features: {
+        title: 'Lo Que Construimos',
+        aiAssistants: {
+          title: 'Asistentes AI y Chatbots',
+          description: 'IA conversacional inteligente que involucra a los visitantes, califica leads y proporciona soporte 24/7.',
+          cta: 'Aprende Más'
+        },
+        customSoftware: {
+          title: 'Desarrollo de Software Personalizado',
+          description: 'Soluciones empresariales personalizadas con tecnologías de vanguardia.',
+          cta: 'Aprende Más'
+        },
+        forgeOrion: {
+          title: 'Plataforma ForgeOrion AI',
+          description: 'Nuestra plataforma propietaria que combina SEO, generación de contenido y analítica predictiva.',
+          cta: 'Aprende Más'
+        },
+        guarantee: {
+          title: 'Garantía de Resultados',
+          description: 'Respaldamos nuestro trabajo con KPIs medibles y resultados garantizados.',
+          cta: 'Aprende Más'
+        }
+      },
+      chat: {
+        title: 'Asistente AI',
+        subtitle: 'Pregúntame sobre nuestros servicios',
+        placeholder: 'Escribe o habla...',
+        greeting: '¡Hola! Soy tu asistente AI. ¿Cómo puedo ayudarte?'
+      }
+    }
+  },
+  fr: {
+    translation: {
+      nav: {
+        home: 'Accueil',
+        features: 'Fonctionnalités',
+        portfolio: 'Portfolio',
+        about: 'À propos',
+        blog: 'Blog',
+        contact: 'Contact',
+        help: 'Aide',
+        getStarted: 'Audit Gratuit'
+      },
+      hero: {
+        ctaAI: 'Obtenir Audit AI Gratuit',
+        ctaCall: 'Réserver Démo (WhatsApp)'
+      },
+      features: {
+        title: 'Ce Que Nous Construisons',
+        aiAssistants: {
+          title: 'Assistants IA et Chatbots',
+          description: 'IA conversationnelle intelligente qui engage les visiteurs et qualifie les prospects 24/7.',
+          cta: 'En Savoir Plus'
+        },
+        customSoftware: {
+          title: 'Développement Logiciel Sur Mesure',
+          description: 'Solutions d\'entreprise personnalisées avec des technologies de pointe.',
+          cta: 'En Savoir Plus'
+        },
+        forgeOrion: {
+          title: 'Plateforme ForgeOrion AI',
+          description: 'Notre plateforme propriétaire combinant SEO, génération de contenu et analyses prédictives.',
+          cta: 'En Savoir Plus'
+        },
+        guarantee: {
+          title: 'Garantie de Résultats',
+          description: 'Nous soutenons notre travail avec des KPI mesurables et des résultats garantis.',
+          cta: 'En Savoir Plus'
+        }
+      },
+      chat: {
+        title: 'Assistant IA',
+        subtitle: 'Posez-moi des questions sur nos services',
+        placeholder: 'Tapez ou parlez...',
+        greeting: 'Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider ?'
+      }
+    }
+  },
+  ja: {
+    translation: {
+      nav: {
+        home: 'ホーム',
+        features: '機能',
+        portfolio: 'ポートフォリオ',
+        about: '会社概要',
+        blog: 'ブログ',
+        contact: 'お問い合わせ',
+        help: 'ヘルプ',
+        getStarted: '無料監査'
+      },
+      hero: {
+        ctaAI: '無料AI監査を取得',
+        ctaCall: 'デモを予約 (WhatsApp)'
+      },
+      features: {
+        title: '私たちが構築するもの',
+        aiAssistants: {
+          title: 'AIアシスタントとチャットボット',
+          description: '訪問者と対話し、リードを評価し、24時間365日のサポートを提供するインテリジェントな会話型AI。',
+          cta: '詳細を見る'
+        },
+        customSoftware: {
+          title: 'カスタムソフトウェア開発',
+          description: '最先端技術でワークフローを自動化するカスタマイズされたエンタープライズソリューション。',
+          cta: '詳細を見る'
+        },
+        forgeOrion: {
+          title: 'ForgeOrion AIプラットフォーム',
+          description: 'SEO最適化、コンテンツ生成、予測分析を組み合わせた独自のAIプラットフォーム。',
+          cta: '詳細を見る'
+        },
+        guarantee: {
+          title: '結果保証',
+          description: '測定可能なKPIと保証された結果で私たちの仕事を支援します。',
+          cta: '詳細を見る'
+        }
+      },
+      chat: {
+        title: 'AIアシスタント',
+        subtitle: 'サービスについて質問する',
+        placeholder: '入力または話す...',
+        greeting: 'こんにちは！AIアシスタントです。どのようにお手伝いできますか？'
+      }
+    }
+  },
+  ko: {
+    translation: {
+      nav: {
+        home: '홈',
+        features: '기능',
+        portfolio: '포트폴리오',
+        about: '회사 소개',
+        blog: '블로그',
+        contact: '연락처',
+        help: '도움말',
+        getStarted: '무료 감사'
+      },
+      hero: {
+        ctaAI: '무료 AI 감사 받기',
+        ctaCall: '데모 예약 (WhatsApp)'
+      },
+      features: {
+        title: '우리가 만드는 것',
+        aiAssistants: {
+          title: 'AI 어시스턴트 및 챗봇',
+          description: '방문자와 소통하고 리드를 평가하며 24/7 고객 지원을 제공하는 지능형 대화형 AI.',
+          cta: '자세히 알아보기'
+        },
+        customSoftware: {
+          title: '맞춤형 소프트웨어 개발',
+          description: '최첨단 기술로 워크플로를 자동화하는 맞춤형 엔터프라이즈 솔루션.',
+          cta: '자세히 알아보기'
+        },
+        forgeOrion: {
+          title: 'ForgeOrion AI 플랫폼',
+          description: 'SEO 최적화, 콘텐츠 생성 및 예측 분석을 결합한 독자적인 AI 플랫폼.',
+          cta: '자세히 알아보기'
+        },
+        guarantee: {
+          title: '결과 보장',
+          description: '측정 가능한 KPI와 보장된 결과로 우리의 작업을 지원합니다.',
+          cta: '자세히 알아보기'
+        }
+      },
+      chat: {
+        title: 'AI 어시스턴트',
+        subtitle: '서비스에 대해 질문하세요',
+        placeholder: '입력하거나 말하세요...',
+        greeting: '안녕하세요! AI 어시스턴트입니다. 무엇을 도와드릴까요?'
       }
     }
   }

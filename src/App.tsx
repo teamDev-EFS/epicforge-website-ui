@@ -9,7 +9,10 @@ import PortfolioPage from './pages/PortfolioPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import HelpPage from './pages/HelpPage';
+import BlogPage from './pages/BlogPage';
+import CaseStudyDetailPage from './pages/CaseStudyDetailPage';
 import FloatingCTA from './components/FloatingCTA';
+import GlobalVoiceSearch from './components/GlobalVoiceSearch';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -32,7 +35,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
         <ScrollToTop />
         <Header />
         <Routes>
@@ -41,10 +44,13 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/help" element={<HelpPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/case-studies/:id" element={<CaseStudyDetailPage />} />
         </Routes>
         <Footer />
         <AIChat />
         <FloatingCTA />
+        <GlobalVoiceSearch />
       </div>
     </Router>
   );
