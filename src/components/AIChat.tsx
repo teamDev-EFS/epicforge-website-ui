@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Bot, X, Mic, MicOff, Send, Volume2, VolumeX } from 'lucide-react';
-import { useSpeechSynthesis, useSpeechRecognition } from 'react-speech-kit';
+import { Bot, X, Send } from 'lucide-react';
 import { saveLead, Lead } from '../lib/supabase';
 
 interface ChatMessage {
@@ -31,14 +30,6 @@ const AIChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { speak, cancel, speaking, supported: speechSupported } = useSpeechSynthesis();
-  const { listen, listening, stop } = useSpeechRecognition({
-    onResult: (result: string) => {
-      setInputValue(result);
-      handleSendMessage(result);
-    }
-  });
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -61,10 +52,6 @@ const AIChat: React.FC = () => {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, message]);
-    
-    if (speechSupported) {
-      speak({ text, voice: getVoiceForLanguage(i18n.language) });
-    }
   };
 
   const addUserMessage = (text: string) => {
@@ -75,18 +62,6 @@ const AIChat: React.FC = () => {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, message]);
-  };
-
-  const getVoiceForLanguage = (language: string) => {
-    const voices = speechSynthesis.getVoices();
-    const languageMap: { [key: string]: string } = {
-      'en': 'en-US',
-      'es': 'es-ES',
-      'fr': 'fr-FR',
-      'ko': 'ko-KR'
-    };
-    
-    return voices.find(voice => voice.lang.startsWith(languageMap[language] || 'en-US'));
   };
 
   const processUserInput = (input: string) => {
@@ -180,20 +155,6 @@ const AIChat: React.FC = () => {
     }
   };
 
-  const toggleListening = () => {
-    if (listening) {
-      stop();
-    } else {
-      listen();
-    }
-  };
-
-  const toggleSpeaking = () => {
-    if (speaking) {
-      cancel();
-    }
-  };
-
   return (
     <>
       {/* Chat Toggle Button */}
@@ -229,14 +190,6 @@ const AIChat: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                {speechSupported && (
-                  <button
-                    onClick={toggleSpeaking}
-                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-                  >
-                    {speaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </button>
-                )}
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/20 rounded-lg transition-colors"
@@ -299,20 +252,7 @@ const AIChat: React.FC = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
-                
-                {speechSupported && (
-                  <button
-                    onClick={toggleListening}
-                    className={`p-2 rounded-full transition-colors ${
-                      listening
-                        ? 'bg-red-500 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {listening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  </button>
-                )}
-                
+
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!inputValue.trim()}
