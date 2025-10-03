@@ -1,16 +1,24 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './lib/i18n';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import Stats from './components/Stats';
-import Features from './components/Features';
-import Portfolio from './components/Portfolio';
-import TechStack from './components/TechStack';
-import About from './components/About';
-import Team from './components/Team';
-import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import AIChat from './components/AIChat';
+import HomePage from './pages/HomePage';
+import PortfolioPage from './pages/PortfolioPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import FloatingCTA from './components/FloatingCTA';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   useEffect(() => {
@@ -22,19 +30,21 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <Stats />
-      <Features />
-      <Portfolio />
-      <TechStack />
-      <About />
-      <Team />
-      <ContactForm />
-      <Footer />
-      <AIChat />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-slate-950">
+        <ScrollToTop />
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+        <Footer />
+        <AIChat />
+        <FloatingCTA />
+      </div>
+    </Router>
   );
 }
 

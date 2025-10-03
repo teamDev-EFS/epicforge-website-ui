@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -17,22 +20,32 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleNavigation = (path: string, sectionId?: string) => {
     setIsMenuOpen(false);
+    if (location.pathname !== path) {
+      navigate(path);
+      if (sectionId) {
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else if (sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   const navItems = [
-    { key: 'home', section: 'hero' },
-    { key: 'features', section: 'features' },
-    { key: 'process', section: 'process' },
-    { key: 'clients', section: 'clients' },
-    { key: 'services', section: 'services' },
-    { key: 'team', section: 'team' },
-    { key: 'contact', section: 'contact' }
+    { key: 'home', path: '/', section: 'hero' },
+    { key: 'about', path: '/about' },
+    { key: 'services', path: '/', section: 'features' },
+    { key: 'portfolio', path: '/portfolio' },
+    { key: 'contact', path: '/contact' }
   ];
 
   return (
@@ -52,7 +65,7 @@ const Header: React.FC = () => {
           <motion.div
             whileHover={{ scale: 1.02 }}
             className="flex items-center space-x-3 cursor-pointer group"
-            onClick={() => scrollToSection('hero')}
+            onClick={() => handleNavigation('/', 'hero')}
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-indigo-500 rounded-xl blur-md opacity-75 group-hover:opacity-100 transition-opacity" />
@@ -93,7 +106,7 @@ const Header: React.FC = () => {
                 key={item.key}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection(item.section)}
+                onClick={() => handleNavigation(item.path, item.section)}
                 className="relative px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 group"
               >
                 {t(`nav.${item.key}`)}
@@ -105,7 +118,7 @@ const Header: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => scrollToSection('contact')}
+              onClick={() => handleNavigation('/contact')}
               className="ml-4 relative group"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-indigo-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300" />
@@ -145,7 +158,7 @@ const Header: React.FC = () => {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     whileHover={{ x: 10 }}
-                    onClick={() => scrollToSection(item.section)}
+                    onClick={() => handleNavigation(item.path, item.section)}
                     className="block w-full text-left px-4 py-3 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-teal-600/20 hover:to-indigo-600/20 rounded-lg transition-all duration-200 font-medium border border-transparent hover:border-teal-500/30"
                   >
                     {t(`nav.${item.key}`)}
@@ -157,7 +170,7 @@ const Header: React.FC = () => {
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: navItems.length * 0.05 }}
-                  onClick={() => scrollToSection('contact')}
+                  onClick={() => handleNavigation('/contact')}
                   className="w-full mt-4 bg-gradient-to-r from-teal-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all"
                 >
                   {t('nav.getStarted')}
