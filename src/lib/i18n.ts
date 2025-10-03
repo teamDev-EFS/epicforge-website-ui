@@ -11,15 +11,20 @@ const resources = {
         process: 'Our Process',
         clients: 'Case Studies',
         services: 'Services',
+        portfolio: 'Portfolio',
         team: 'Team',
         about: 'About',
+        blog: 'Blog',
         contact: 'Contact',
+        help: 'Help',
         getStarted: 'Get Free Audit'
       },
       hero: {
         badge: 'AI-Powered Growth Engine',
         headline: 'Website, AI SEO & Automation — All Working Together to Grow Your Brand',
         subheadline: 'We design futuristic, conversion-first websites + AI systems that deliver more traffic, higher conversions, and measurable growth — on Google, ChatGPT and everywhere your customers search.',
+        ctaAI: 'Get a Free AI Audit',
+        ctaCall: 'Book a Demo (WhatsApp)',
         primaryCTA: 'Get a Free AI Audit',
         secondaryCTA: 'Book a Demo',
         whatsappCTA: 'WhatsApp',
@@ -136,7 +141,22 @@ const resources = {
       team: {
         title: 'Meet Our Elite Team',
         subtitle: 'World-class experts driving your digital transformation',
-        viewProfile: 'View Profile'
+        viewProfile: 'View Profile',
+        ceo: {
+          name: 'ADITYA VARDHAN NAGAMALLI',
+          title: 'CEO | FOUNDER',
+          description: 'Visionary leader with 10+ years in AI and enterprise solutions'
+        },
+        cto: {
+          name: 'AVINASH KUMAR NAGUMALLI',
+          title: 'CTO | CO-FOUNDER',
+          description: 'Technology architect specializing in scalable AI systems'
+        },
+        coo: {
+          name: 'HARSHA VARDHAN NAGAMALLI',
+          title: 'COO | CO-FOUNDER',
+          description: 'Operations expert driving global expansion and client success'
+        }
       },
       about: {
         title: 'About EpicForge Software',
@@ -176,9 +196,12 @@ const resources = {
       chat: {
         title: 'AI Assistant',
         subtitle: 'Ask me anything about our services',
-        placeholder: 'Type your message...',
+        placeholder: 'Type your message or speak...',
         send: 'Send',
-        greeting: 'Hello! I\'m your AI assistant. How can I help you today?'
+        greeting: 'Hello! I\'m your AI assistant. How can I help you today?',
+        voiceButton: 'Voice Input',
+        listeninghelp: 'Listening...',
+        needHelp: 'Need Help? Click here!'
       },
       footer: {
         tagline: 'Forging the Future of Innovation',

@@ -1,265 +1,312 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Bot, X, Send } from 'lucide-react';
-import { saveLead, Lead } from '../lib/supabase';
+import { MessageCircle, X, Send, Mic, MicOff, Volume2, User, Bot } from 'lucide-react';
 
-interface ChatMessage {
-  id: string;
+interface Message {
+  id: number;
   text: string;
-  isBot: boolean;
+  sender: 'user' | 'bot';
   timestamp: Date;
 }
 
-interface ChatState {
-  step: 'greeting' | 'name' | 'email' | 'budget' | 'project' | 'timeline' | 'qualified';
-  userData: Partial<Lead>;
-}
-
 const AIChat: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [chatState, setChatState] = useState<ChatState>({
-    step: 'greeting',
-    userData: { language: i18n.language }
-  });
-
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      text: t('chat.greeting'),
+      sender: 'bot',
+      timestamp: new Date()
+    }
+  ]);
+  const [input, setInput] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    scrollToBottom();
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      addBotMessage(t('chat.greeting'));
-    }
-  }, [isOpen, t]);
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
 
-  const addBotMessage = (text: string) => {
-    const message: ChatMessage = {
-      id: Date.now().toString(),
-      text,
-      isBot: true,
+    const userMessage: Message = {
+      id: messages.length + 1,
+      text: input,
+      sender: 'user',
       timestamp: new Date()
     };
-    setMessages(prev => [...prev, message]);
-  };
 
-  const addUserMessage = (text: string) => {
-    const message: ChatMessage = {
-      id: Date.now().toString(),
-      text,
-      isBot: false,
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, message]);
-  };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
 
-  const processUserInput = (input: string) => {
-    const newUserData = { ...chatState.userData };
-    let nextStep = chatState.step;
-    let botResponse = '';
-
-    switch (chatState.step) {
-      case 'greeting':
-        nextStep = 'name';
-        botResponse = t('chat.askName');
-        break;
-      
-      case 'name':
-        newUserData.name = input;
-        nextStep = 'email';
-        botResponse = t('chat.askEmail', { name: input });
-        break;
-      
-      case 'email':
-        newUserData.email = input;
-        nextStep = 'budget';
-        botResponse = t('chat.askBudget');
-        break;
-      
-      case 'budget':
-        newUserData.budget = input;
-        nextStep = 'project';
-        botResponse = t('chat.askProject');
-        break;
-      
-      case 'project':
-        newUserData.project_type = input;
-        nextStep = 'timeline';
-        botResponse = t('chat.askTimeline');
-        break;
-      
-      case 'timeline':
-        newUserData.timeline = input;
-        nextStep = 'qualified';
-        botResponse = t('chat.qualified');
-        
-        // Save lead to Supabase
-        const leadData: Omit<Lead, 'id' | 'created_at'> = {
-          name: newUserData.name || '',
-          email: newUserData.email || '',
-          budget: newUserData.budget || '',
-          project_type: newUserData.project_type || '',
-          timeline: newUserData.timeline || '',
-          problem: `${newUserData.project_type} - ${newUserData.timeline}`,
-          language: i18n.language,
-          source: 'ai_chat',
-          qualified: true
-        };
-        
-        saveLead(leadData).then(() => {
-          // Trigger Calendly after a delay
-          setTimeout(() => {
-            addBotMessage(t('chat.calendlyTrigger'));
-            setTimeout(() => {
-              window.open('https://calendly.com/team-dev-epicforgesoftware/30min', '_blank');
-            }, 1000);
-          }, 2000);
-        }).catch(console.error);
-        break;
-    }
-
-    setChatState({ step: nextStep, userData: newUserData });
-    return botResponse;
-  };
-
-  const handleSendMessage = (message?: string) => {
-    const text = message || inputValue.trim();
-    if (!text) return;
-
-    addUserMessage(text);
-    setInputValue('');
-    setIsTyping(true);
-
-    // Simulate typing delay
     setTimeout(() => {
-      const botResponse = processUserInput(text);
-      addBotMessage(botResponse);
-      setIsTyping(false);
+      const botResponse = generateBotResponse(input);
+      const botMessage: Message = {
+        id: messages.length + 2,
+        text: botResponse,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botMessage]);
+
+      if (isSpeaking) {
+        speakText(botResponse);
+      }
     }, 1000);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
+  const generateBotResponse = (userInput: string): string => {
+    const lowerInput = userInput.toLowerCase();
+
+    if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('quote')) {
+      return "I'd be happy to help with pricing! Our services are customized based on your needs. Would you like to book a free consultation call, or get an instant quote via WhatsApp?";
+    }
+
+    if (lowerInput.includes('ai') || lowerInput.includes('automation')) {
+      return "We specialize in AI-powered solutions including AI SEO optimization, voice assistants, chatbots, and workflow automation. Our AI systems have helped clients achieve 350% traffic growth. Would you like to learn more about a specific service?";
+    }
+
+    if (lowerInput.includes('seo')) {
+      return "Our AI SEO service optimizes your website for both traditional Google search and modern LLM platforms like ChatGPT. We use structured data, conversational content, and advanced schema markup to ensure maximum visibility. Would you like a free SEO audit?";
+    }
+
+    if (lowerInput.includes('portfolio') || lowerInput.includes('work') || lowerInput.includes('projects')) {
+      return "We've delivered 15+ projects for clients globally, including AI-powered e-commerce platforms, enterprise automation suites, and healthcare apps. Check out our Portfolio page to see detailed case studies!";
+    }
+
+    if (lowerInput.includes('contact') || lowerInput.includes('call') || lowerInput.includes('meet')) {
+      return "Great! You can reach us at info@epicforgesoftware.com or book a free strategy call through our Contact page. We also offer instant WhatsApp consultations - just click the floating button on your screen!";
+    }
+
+    if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+      return "Hello! Welcome to EpicForge Software. I'm here to help you with any questions about our AI solutions, web development, or automation services. What would you like to know?";
+    }
+
+    return "That's a great question! Our team specializes in AI-driven websites, IT solutions, and enterprise automation. Would you like to schedule a free consultation to discuss your specific needs, or would you prefer to explore our services first?";
+  };
+
+  const speakText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      if (recognitionRef.current) {
+        recognitionRef.current.start();
+        setIsListening(true);
+      }
+    }
+  };
+
+  const toggleVoiceOutput = () => {
+    setIsSpeaking(!isSpeaking);
+    if (!isSpeaking && messages.length > 0) {
+      const lastBotMessage = [...messages].reverse().find(m => m.sender === 'bot');
+      if (lastBotMessage) {
+        speakText(lastBotMessage.text);
+      }
     }
   };
 
   return (
     <>
       {/* Chat Toggle Button */}
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center z-40"
-      >
-        <Bot className="w-8 h-8" />
-        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-      </motion.button>
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-8 left-8 z-40 group"
+          >
+            <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 via-pink-600 to-purple-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 animate-pulse" />
+            <div className="relative w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-2xl flex items-center justify-center">
+              <MessageCircle className="w-7 h-7 text-white" />
+              <motion.div
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [1, 0, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity
+                }}
+                className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-950"
+              />
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            exit={{ opacity: 0, scale: 0.8, y: 100 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+            className="fixed bottom-8 left-8 z-50 w-96 h-[600px] bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl shadow-2xl border border-purple-500/20 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6" />
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">AI Assistant</h3>
-                  <p className="text-xs opacity-90">Online • Multilingual</p>
+                  <h3 className="text-white font-bold">{t('chat.title')}</h3>
+                  <p className="text-purple-100 text-xs">{t('chat.subtitle')}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={toggleVoiceOutput}
+                  className={`p-2 rounded-lg transition-colors ${
+                    isSpeaking ? 'bg-white/20' : 'bg-white/10'
+                  }`}
                 >
-                  <X className="w-4 h-4" />
-                </button>
+                  <Volume2 className={`w-5 h-5 ${isSpeaking ? 'text-white' : 'text-white/70'}`} />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </motion.button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 p-4 h-80 overflow-y-auto bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`mb-4 flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+                  transition={{ duration: 0.3 }}
+                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`max-w-xs px-4 py-2 rounded-2xl ${
-                      message.isBot
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                    }`}
-                  >
-                    <p className="text-sm">{message.text}</p>
-                  </div>
-                </motion.div>
-              ))}
-              
-              {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-start mb-4"
-                >
-                  <div className="bg-white px-4 py-2 rounded-2xl shadow-sm">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+                  <div className={`flex items-start space-x-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      message.sender === 'user'
+                        ? 'bg-gradient-to-r from-teal-600 to-cyan-600'
+                        : 'bg-gradient-to-r from-purple-600 to-pink-600'
+                    }`}>
+                      {message.sender === 'user' ? (
+                        <User className="w-5 h-5 text-white" />
+                      ) : (
+                        <Bot className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <div className={`rounded-2xl p-3 ${
+                      message.sender === 'user'
+                        ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white'
+                        : 'bg-slate-800 text-gray-200'
+                    }`}>
+                      <p className="text-sm leading-relaxed">{message.text}</p>
+                      <span className="text-xs opacity-70 mt-1 block">
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                   </div>
                 </motion.div>
-              )}
+              ))}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="p-4 border-t border-gray-200 bg-white">
+            {/* Input Area */}
+            <div className="p-4 bg-slate-900/50 backdrop-blur-sm border-t border-purple-500/20">
               <div className="flex items-center space-x-2">
                 <div className="flex-1 relative">
                   <input
-                    ref={inputRef}
                     type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Type your message..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder={isListening ? 'Listening...' : t('chat.placeholder')}
+                    className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
                   />
+                  {isListening && (
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full"
+                    />
+                  )}
                 </div>
 
-                <button
-                  onClick={() => handleSendMessage()}
-                  disabled={!inputValue.trim()}
-                  className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={toggleVoiceInput}
+                  className={`p-3 rounded-xl transition-all ${
+                    isListening
+                      ? 'bg-red-500 text-white'
+                      : 'bg-purple-600 text-white hover:bg-purple-700'
+                  }`}
                 >
-                  <Send className="w-4 h-4" />
-                </button>
+                  {isListening ? (
+                    <MicOff className="w-5 h-5" />
+                  ) : (
+                    <Mic className="w-5 h-5" />
+                  )}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleSendMessage}
+                  disabled={!input.trim()}
+                  className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-5 h-5" />
+                </motion.button>
               </div>
             </div>
           </motion.div>
