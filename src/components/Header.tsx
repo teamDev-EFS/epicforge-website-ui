@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -114,6 +115,9 @@ const Header: React.FC = () => {
               </motion.button>
             ))}
 
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             {/* CTA Button */}
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
@@ -129,7 +133,8 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center">
+          <div className="lg:hidden flex items-center space-x-2">
+            <LanguageSwitcher />
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}

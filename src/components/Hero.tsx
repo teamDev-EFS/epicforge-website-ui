@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, MessageCircle } from 'lucide-react';
+import { Sparkles, ArrowRight, MessageCircle, Calendar, Bot } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const { t } = useTranslation();
@@ -139,36 +139,37 @@ const Hero: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Matching Screenshot Design */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12"
           >
-            {/* Primary CTA */}
+            {/* Primary CTA - AI Audit */}
             <motion.button
               onClick={scrollToContact}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="group relative"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-500 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition duration-300" />
-              <div className="relative bg-gradient-to-r from-teal-600 to-indigo-600 text-white px-12 py-6 rounded-2xl font-bold text-lg shadow-2xl flex items-center space-x-3">
-                <span>{t('hero.primaryCTA')}</span>
+              <div className="absolute -inset-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-300" />
+              <div className="relative bg-gradient-to-r from-teal-600 to-blue-600 text-white px-10 py-4 rounded-full font-bold text-lg shadow-2xl flex items-center space-x-3">
+                <Bot className="w-6 h-6" />
+                <span>{t('hero.ctaAI')}</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </div>
             </motion.button>
 
-            {/* Secondary CTA - WhatsApp */}
+            {/* Secondary CTA - Book Demo */}
             <motion.button
               onClick={openWhatsApp}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              className="group relative bg-white/5 backdrop-blur-md border-2 border-white/20 text-white px-12 py-6 rounded-2xl font-bold text-lg hover:bg-white/10 hover:border-white/30 transition-all duration-300 flex items-center space-x-3 shadow-xl"
+              className="group relative bg-slate-800/50 backdrop-blur-md border-2 border-white/20 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-slate-700/50 hover:border-white/30 transition-all duration-300 flex items-center space-x-3 shadow-xl"
             >
-              <MessageCircle className="w-5 h-5" />
-              <span>{t('hero.secondaryCTA')} ({t('hero.whatsappCTA')})</span>
+              <Calendar className="w-6 h-6" />
+              <span>{t('hero.ctaCall')}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>
           </motion.div>

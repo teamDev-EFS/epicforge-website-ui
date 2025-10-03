@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import PortfolioPage from './pages/PortfolioPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import HelpPage from './pages/HelpPage';
 import FloatingCTA from './components/FloatingCTA';
 
 function ScrollToTop() {
@@ -39,6 +40,7 @@ function App() {
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/help" element={<HelpPage />} />
         </Routes>
         <Footer />
         <AIChat />
