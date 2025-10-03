@@ -110,7 +110,7 @@ const Hero: React.FC = () => {
             {/* Main Visual Card */}
             <div className="relative bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl p-16 rounded-3xl border border-cyan-500/20 min-h-[500px]">
 
-              {/* Central Logo/Icon - Large */}
+              {/* Central Logo/Icon - Large with Yellow Border */}
               <motion.div
                 animate={{
                   rotate: [0, 5, -5, 0],
@@ -121,9 +121,31 @@ const Hero: React.FC = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-cyan-500/50 z-20"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
               >
-                <div className="text-white text-6xl font-black">R</div>
+                {/* Yellow animated border */}
+                <motion.div
+                  animate={{
+                    rotate: [0, 360]
+                  }}
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="absolute inset-0 w-44 h-44 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                >
+                  <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-yellow-400 border-r-yellow-400" style={{ borderRadius: '45% 55% 50% 50%' }}></div>
+                </motion.div>
+
+                {/* Logo container */}
+                <div className="relative w-36 h-36 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-cyan-500/50 overflow-hidden">
+                  <img
+                    src="/Gemini_Generated_Image_5lyx5m5lyx5m5lyx copy.png"
+                    alt="EpicForge Software Logo"
+                    className="w-24 h-24 object-contain"
+                  />
+                </div>
               </motion.div>
 
               {/* WordPress Icon - Top Right */}
