@@ -1,6 +1,5 @@
 import React from 'react';
 import Hero from '../components/Hero';
-import VisualAbout from '../components/VisualAbout';
 import Stats from '../components/Stats';
 import Features from '../components/Features';
 import Portfolio from '../components/Portfolio';
@@ -51,7 +50,6 @@ const HomePage: React.FC = () => {
       />
 
       <Hero />
-      <VisualAbout />
       <Stats />
       <Features />
       <section id="portfolio-preview" className="py-20">
