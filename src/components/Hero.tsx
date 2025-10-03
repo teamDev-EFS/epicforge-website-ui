@@ -1,211 +1,186 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Bot, Calendar, Sparkles, ArrowRight, Play } from 'lucide-react';
+import { Sparkles, ArrowRight, MessageCircle } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const { t } = useTranslation();
+  const [currentWord, setCurrentWord] = useState(0);
+  const cyclingWords = ['Traffic.', 'Leads.', 'Rankings.', 'Growth.'];
 
-  const openCalendly = () => {
-    window.open('https://calendly.com/team-dev-epicforgesoftware/30min', '_blank');
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWord((prev) => (prev + 1) % cyclingWords.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const scrollToContact = () => {
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const scrollToPortfolio = () => {
-    document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
+  const openWhatsApp = () => {
+    window.open('https://wa.me/yourphonenumber?text=Hi%20EpicForge!%20I%20need%20a%20quick%20quote', '_blank');
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Premium Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900">
-        {/* Floating orbs */}
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {/* Floating gradient orbs */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.15, 0.25, 0.15],
+            x: [0, 50, 0],
+            y: [0, 30, 0]
           }}
           transition={{
-            duration: 8,
+            duration: 12,
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"
-        ></motion.div>
+          className="absolute top-20 left-10 w-[600px] h-[600px] bg-teal-500/20 rounded-full blur-3xl"
+        />
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.1, 0.2, 0.1],
+            x: [0, -40, 0],
+            y: [0, 50, 0]
           }}
           transition={{
-            duration: 10,
+            duration: 15,
             repeat: Infinity,
             ease: "easeInOut",
             delay: 1
           }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl"
-        ></motion.div>
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5
-          }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-600/20 rounded-full blur-2xl"
-        ></motion.div>
+          className="absolute bottom-20 right-10 w-[700px] h-[700px] bg-indigo-500/20 rounded-full blur-3xl"
+        />
 
-        {/* Premium grid pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-40"></div>
+        {/* Animated grid lines */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
 
-        {/* Animated lines */}
+        {/* Diagonal moving lines */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/3 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"
-          ></motion.div>
-          <motion.div
-            animate={{ x: ['100%', '-100%'] }}
+            animate={{ x: ['-100%', '200%'], y: ['-50%', '50%'] }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-2/3 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
-          ></motion.div>
+            className="absolute w-full h-px bg-gradient-to-r from-transparent via-teal-400/40 to-transparent"
+            style={{ top: '30%' }}
+          />
+          <motion.div
+            animate={{ x: ['200%', '-100%'], y: ['50%', '-50%'] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute w-full h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent"
+            style={{ top: '70%' }}
+          />
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center max-w-5xl mx-auto">
-          {/* Premium Badge */}
+        <div className="text-center max-w-6xl mx-auto">
+          {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-teal-500/10 to-indigo-500/10 backdrop-blur-md border border-teal-400/20 rounded-full px-6 py-3 mb-10 shadow-lg"
+          >
+            <Sparkles className="w-4 h-4 text-teal-400" />
+            <span className="text-sm font-semibold text-white">AI-Powered Growth Engine</span>
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-2 h-2 bg-teal-400 rounded-full"
+            />
+          </motion.div>
+
+          {/* Main Headline */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-md border border-blue-400/30 rounded-full px-6 py-3 mb-8 shadow-lg"
           >
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-sm font-semibold text-white">{t('hero.proudCreators')}</span>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="w-2 h-2 bg-cyan-400 rounded-full"
-            ></motion.div>
-          </motion.div>
-
-          {/* Main Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-
             <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-8 leading-[1.1]">
-              {t('hero.headline').split('Without')[0]}
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 mt-4"
-              >
-                {t('hero.subheadline')}
-              </motion.span>
+              {t('hero.headline')}
             </h1>
-
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed max-w-4xl mx-auto">
-              {t('hero.description')}
-            </p>
-
-            <p className="text-lg text-blue-300 mb-12 font-semibold">
-              {t('hero.subtitle')}
-            </p>
           </motion.div>
 
-          {/* Premium CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed max-w-5xl mx-auto"
           >
-            <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
+            {t('hero.subheadline')}
+          </motion.p>
+
+          {/* Dynamic Cycling Text */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mb-12 h-20"
+          >
+            <div className="text-4xl md:text-5xl lg:text-6xl font-bold">
+              <motion.span
+                key={currentWord}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-indigo-400"
+              >
+                {cyclingWords[currentWord]}
+              </motion.span>
+            </div>
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12"
+          >
+            {/* Primary CTA */}
+            <motion.button
+              onClick={scrollToContact}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="group relative"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition duration-300"></div>
-              <button className="relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-2xl flex items-center space-x-3">
-                <Bot className="w-6 h-6" />
-                <div className="text-left">
-                  <div className="flex items-center space-x-2">
-                    <span>{t('hero.ctaAI')}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                  <div className="text-xs opacity-90 font-normal">{t('hero.ctaAISubtext')}</div>
-                </div>
-              </button>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="group"
-            >
-              <button
-                onClick={openCalendly}
-                className="relative bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white/20 hover:border-white/50 transition-all duration-300 flex items-center space-x-3 shadow-xl"
-              >
-                <Calendar className="w-6 h-6" />
-                <div className="text-left">
-                  <div className="flex items-center space-x-2">
-                    <span>{t('hero.ctaCall')}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                  <div className="text-xs opacity-90 font-normal">{t('hero.ctaCallSubtext')}</div>
-                </div>
-              </button>
-            </motion.div>
-
-            <motion.button
-              onClick={scrollToPortfolio}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="group flex items-center space-x-2 text-white/80 hover:text-white transition-colors"
-            >
-              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center group-hover:bg-white/20 transition-all">
-                <Play className="w-5 h-5" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-500 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition duration-300" />
+              <div className="relative bg-gradient-to-r from-teal-600 to-indigo-600 text-white px-12 py-6 rounded-2xl font-bold text-lg shadow-2xl flex items-center space-x-3">
+                <span>{t('hero.primaryCTA')}</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </div>
-              <span className="text-sm font-semibold">View Projects</span>
+            </motion.button>
+
+            {/* Secondary CTA - WhatsApp */}
+            <motion.button
+              onClick={openWhatsApp}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative bg-white/5 backdrop-blur-md border-2 border-white/20 text-white px-12 py-6 rounded-2xl font-bold text-lg hover:bg-white/10 hover:border-white/30 transition-all duration-300 flex items-center space-x-3 shadow-xl"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span>{t('hero.secondaryCTA')} ({t('hero.whatsappCTA')})</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>
           </motion.div>
 
-          {/* Trust Indicators */}
+          {/* Supporting Features Text */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-wrap justify-center gap-8 md:gap-12 items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="text-sm md:text-base text-gray-400 font-medium"
           >
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-1">57+</div>
-              <div className="text-sm text-gray-400 font-medium">Global Clients</div>
-            </div>
-            <div className="w-px h-12 bg-white/20"></div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-1">120+</div>
-              <div className="text-sm text-gray-400 font-medium">Projects Delivered</div>
-            </div>
-            <div className="w-px h-12 bg-white/20"></div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-1">15+</div>
-              <div className="text-sm text-gray-400 font-medium">Countries</div>
-            </div>
-            <div className="w-px h-12 bg-white/20"></div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-1">95%</div>
-              <div className="text-sm text-gray-400 font-medium">Satisfaction</div>
-            </div>
+            {t('hero.supportingText')}
           </motion.div>
         </div>
       </div>
@@ -215,13 +190,13 @@ const Hero: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center cursor-pointer"
-          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth' })}
         >
           <motion.div
             animate={{ y: [0, 12, 0] }}
