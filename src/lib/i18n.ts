@@ -8,20 +8,27 @@ const resources = {
       nav: {
         home: 'Home',
         features: 'Features',
-        process: 'Process',
-        clients: 'Clients',
-        contact: 'Contact'
+        process: 'Our Process',
+        clients: 'Case Studies',
+        services: 'Services',
+        team: 'Team',
+        about: 'About',
+        contact: 'Contact',
+        getStarted: 'Get Free Audit'
       },
       hero: {
+        badge: 'AI-Powered Growth Engine',
         headline: 'Website, AI SEO & Automation — All Working Together to Grow Your Brand',
         subheadline: 'We design futuristic, conversion-first websites + AI systems that deliver more traffic, higher conversions, and measurable growth — on Google, ChatGPT and everywhere your customers search.',
         primaryCTA: 'Get a Free AI Audit',
         secondaryCTA: 'Book a Demo',
         whatsappCTA: 'WhatsApp',
-        supportingText: 'Fast builds • LLM SEO • Voice search • Multilingual chat • Quote automation'
+        supportingText: 'Fast builds • LLM SEO • Voice search • Multilingual chat • Quote automation',
+        cyclingWords: ['Traffic.', 'Leads.', 'Rankings.', 'Growth.']
       },
       features: {
         title: 'What We Build',
+        subtitle: 'Six core services that transform your digital presence',
         aiSEO: {
           title: 'AI SEO & LLM Rankings',
           description: 'We optimize for Google\'s AI insights and ChatGPT-style results so your brand shows up where modern searchers ask questions.',
@@ -66,6 +73,7 @@ const resources = {
       },
       process: {
         title: 'Our 5-Step Digital Revival Strategy',
+        subtitle: 'A proven framework that transforms your online presence',
         step1: {
           title: 'Redesign & Speed Optimization',
           description: 'Fast, modular frontends, critical CSS, lazy load assets, CDN, and image optimization.',
@@ -103,23 +111,47 @@ const resources = {
         websiteDesign: {
           title: 'Website Design & Development',
           description: 'Conversion-first, fast, and optimized for modern search',
+          features: ['Custom Design', 'Mobile Responsive', 'Speed Optimized', 'SEO Ready'],
           cta: 'Request Quote'
         },
         aiSEO: {
           title: 'AI SEO & LLM Optimization',
           description: 'Rank on Google, ChatGPT, and voice search platforms',
+          features: ['LLM Optimization', 'Schema Markup', 'Content Strategy', 'Technical SEO'],
           cta: 'Free Site Audit'
         },
         voiceSearch: {
           title: 'Voice Search + Chatbot',
           description: 'Let customers speak to your site in any language',
+          features: ['Voice Recognition', 'Multi-language', 'AI Responses', 'Lead Capture'],
           cta: 'Live Demo'
         },
         automation: {
           title: 'Automation & WhatsApp Quoting',
           description: 'Smart forms that generate and send quotes instantly',
+          features: ['Auto Quotation', 'WhatsApp Integration', 'Email Automation', 'CRM Sync'],
           cta: 'Integrate Now'
         }
+      },
+      team: {
+        title: 'Meet Our Elite Team',
+        subtitle: 'World-class experts driving your digital transformation',
+        viewProfile: 'View Profile'
+      },
+      about: {
+        title: 'About EpicForge Software',
+        subtitle: 'Forging the Future of Innovation',
+        mission: 'Our Mission',
+        missionText: 'To empower businesses worldwide with AI-driven solutions that automate workflows, amplify growth, and deliver measurable ROI.',
+        vision: 'Our Vision',
+        visionText: 'To be the global #1 authority in AI-powered IT services, recognized for futuristic innovation and client success.',
+        values: 'Our Values',
+        innovation: 'Innovation First',
+        innovationText: 'Pushing boundaries with cutting-edge AI and automation',
+        results: 'Results Driven',
+        resultsText: 'Every project measured by real business outcomes',
+        partnership: 'True Partnership',
+        partnershipText: 'Your success is our success — we grow together'
       },
       testimonials: {
         title: 'What Our Clients Say',
@@ -129,6 +161,7 @@ const resources = {
       },
       form: {
         title: 'Request Your Free AI Audit',
+        subtitle: 'Get a comprehensive analysis of your current digital presence and discover opportunities for AI-powered growth',
         name: 'Full Name',
         email: 'Email Address',
         phone: 'Phone Number',
@@ -140,15 +173,36 @@ const resources = {
         success: 'Thank you! We\'ll send your audit within 24 hours.',
         error: 'Something went wrong. Please try again.'
       },
+      chat: {
+        title: 'AI Assistant',
+        subtitle: 'Ask me anything about our services',
+        placeholder: 'Type your message...',
+        send: 'Send',
+        greeting: 'Hello! I\'m your AI assistant. How can I help you today?'
+      },
       footer: {
+        tagline: 'Forging the Future of Innovation',
         quickActions: 'Quick Actions',
         freeAudit: 'Request Free Audit',
         bookDemo: 'Book a Demo',
         subscribe: 'Subscribe for AI SEO Tips',
-        contact: 'Contact: info@epicforgesoftware.com',
-        rights: 'All Rights Reserved by EpicForgeSoftware • © 2025',
+        navigation: 'Navigation',
+        company: 'Company',
+        legal: 'Legal',
+        contact: 'Contact Us',
+        email: 'info@epicforgesoftware.com',
+        phone: '+1 (555) 123-4567',
+        address: 'Global HQ: San Francisco, CA',
+        rights: 'All Rights Reserved by EpicForgeSoftware',
         privacy: 'Privacy Policy',
-        terms: 'Terms of Service'
+        terms: 'Terms of Service',
+        socials: 'Follow Us'
+      },
+      cta: {
+        floating: {
+          whatsapp: 'Chat with our AI — Get a Quick Quote',
+          audit: 'Get Free Audit'
+        }
       }
     }
   }
