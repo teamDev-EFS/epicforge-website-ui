@@ -1,38 +1,75 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Backend API configuration
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 export interface Lead {
-  id?: string;
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
+  whatsapp?: string;
   company?: string;
-  business_type?: string;
-  budget: string;
-  project_type: string;
-  timeline?: string;
+  businessType: string;
+  projectType: string;
+  budget: number;
   problem: string;
-  language: string;
-  source: 'ai_chat' | 'form';
-  qualified: boolean;
-  created_at?: string;
+  source?: string;
+  language?: string;
 }
 
-export const saveLead = async (lead: Omit<Lead, 'id' | 'created_at'>) => {
-  const { data, error } = await supabase
-    .from('leads')
-    .insert([lead])
-    .select()
-    .single();
+export interface LeadResponse {
+  success: boolean;
+  message: string;
+  data: {
+    leadId: string;
+    budgetInfo: {
+      formatted: string;
+      category: string;
+      priority: string;
+    };
+    projectEstimate: {
+      duration: string;
+      category: string;
+      priority: string;
+    };
+  };
+}
 
-  if (error) {
-    console.error('Error saving lead:', error);
+export const saveLead = async (leadData: Lead): Promise<LeadResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/leads`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(leadData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to save lead");
+    }
+
+    const result: LeadResponse = await response.json();
+    console.log("Lead saved successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("Error in saveLead:", error);
     throw error;
   }
+};
 
-  return data;
+export const getLeadStats = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/leads/stats/overview`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch lead statistics");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching lead stats:", error);
+    throw error;
+  }
 };

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { Search, Calendar, User, ArrowRight, TrendingUp } from 'lucide-react';
-import { BlogPostSchema, FAQSchema } from '../components/SEOSchemas';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Search, Calendar, User, ArrowRight, TrendingUp } from "lucide-react";
 
 interface BlogPost {
   id: string;
@@ -18,89 +17,92 @@ interface BlogPost {
 
 const BlogPage: React.FC = () => {
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ['All', 'AI SEO', 'Web Development', 'Automation', 'Case Studies'];
+  const categories = [
+    "All",
+    "AI SEO",
+    "Web Development",
+    "Automation",
+    "Case Studies",
+  ];
 
   const blogPosts: BlogPost[] = [
     {
-      id: '1',
-      slug: 'how-ai-seo-ranks-chatgpt',
-      title: 'How to Rank Your Business on ChatGPT with AI SEO',
-      excerpt: 'Learn the exact strategies we use to get our clients featured in ChatGPT responses and AI-generated search results.',
-      author: 'Aditya Vardhan',
-      date: '2024-12-15',
-      category: 'AI SEO',
-      readTime: '8 min read',
-      image: '/api/placeholder/800/400'
+      id: "1",
+      slug: "how-ai-seo-ranks-chatgpt",
+      title: "How to Rank Your Business on ChatGPT with AI SEO",
+      excerpt:
+        "Learn the exact strategies we use to get our clients featured in ChatGPT responses and AI-generated search results.",
+      author: "Aditya Vardhan",
+      date: "2024-12-15",
+      category: "AI SEO",
+      readTime: "8 min read",
+      image: "/api/placeholder/800/400",
     },
     {
-      id: '2',
-      slug: 'voice-search-optimization-2024',
-      title: 'Voice Search Optimization: The Complete 2024 Guide',
-      excerpt: 'Voice search is transforming how customers find businesses. Here\'s how to optimize your website for Alexa, Siri, and Google Assistant.',
-      author: 'Avinash Kumar',
-      date: '2024-12-10',
-      category: 'AI SEO',
-      readTime: '10 min read',
-      image: '/api/placeholder/800/400'
+      id: "2",
+      slug: "voice-search-optimization-2024",
+      title: "Voice Search Optimization: The Complete 2024 Guide",
+      excerpt:
+        "Voice search is transforming how customers find businesses. Here's how to optimize your website for Alexa, Siri, and Google Assistant.",
+      author: "Avinash Kumar",
+      date: "2024-12-10",
+      category: "AI SEO",
+      readTime: "10 min read",
+      image: "/api/placeholder/800/400",
     },
     {
-      id: '3',
-      slug: '350-percent-traffic-growth-case-study',
-      title: 'How We Achieved 350% Traffic Growth in 6 Months',
-      excerpt: 'A deep dive into the exact LLM SEO strategies that helped our client dominate their industry.',
-      author: 'Harsha Vardhan',
-      date: '2024-12-05',
-      category: 'Case Studies',
-      readTime: '12 min read',
-      image: '/api/placeholder/800/400'
+      id: "3",
+      slug: "350-percent-traffic-growth-case-study",
+      title: "How We Achieved 350% Traffic Growth in 6 Months",
+      excerpt:
+        "A deep dive into the exact LLM SEO strategies that helped our client dominate their industry.",
+      author: "Harsha Vardhan",
+      date: "2024-12-05",
+      category: "Case Studies",
+      readTime: "12 min read",
+      image: "/api/placeholder/800/400",
     },
     {
-      id: '4',
-      slug: 'ai-chatbot-lead-generation',
-      title: 'AI Chatbots That Convert: Boosting Lead Quality by 200%',
-      excerpt: 'Discover how our intelligent chatbots with voice capabilities qualify leads and book consultations automatically.',
-      author: 'Aditya Vardhan',
-      date: '2024-11-28',
-      category: 'Automation',
-      readTime: '7 min read',
-      image: '/api/placeholder/800/400'
-    }
+      id: "4",
+      slug: "ai-chatbot-lead-generation",
+      title: "AI Chatbots That Convert: Boosting Lead Quality by 200%",
+      excerpt:
+        "Discover how our intelligent chatbots with voice capabilities qualify leads and book consultations automatically.",
+      author: "Aditya Vardhan",
+      date: "2024-11-28",
+      category: "Automation",
+      readTime: "7 min read",
+      image: "/api/placeholder/800/400",
+    },
   ];
 
-  const filteredPosts = blogPosts.filter(post => {
-    const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredPosts = blogPosts.filter((post) => {
+    const matchesCategory =
+      selectedCategory === "All" || post.category === selectedCategory;
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   const faqs = [
     {
       question: "What is LLM SEO and why is it important?",
-      answer: "LLM SEO optimizes your content for Large Language Models like ChatGPT and Google AI. It's crucial because millions of users now get answers directly from AI assistants rather than traditional search engines."
+      answer:
+        "LLM SEO optimizes your content for Large Language Models like ChatGPT and Google AI. It's crucial because millions of users now get answers directly from AI assistants rather than traditional search engines.",
     },
     {
       question: "How long does it take to see results from AI SEO?",
-      answer: "Most clients see initial improvements in 2-3 months, with significant traffic growth (200-350%) within 6 months. Results vary based on industry and current website state."
-    }
+      answer:
+        "Most clients see initial improvements in 2-3 months, with significant traffic growth (200-350%) within 6 months. Results vary based on industry and current website state.",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50/30 pt-32 pb-20">
-      <FAQSchema faqs={faqs} />
-      <BlogPostSchema
-        headline={blogPosts[0].title}
-        description={blogPosts[0].excerpt}
-        author={blogPosts[0].author}
-        datePublished={blogPosts[0].date}
-        dateModified={blogPosts[0].date}
-        image={blogPosts[0].image}
-        url={`https://epicforgesoftware.com/blog/${blogPosts[0].slug}`}
-      />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -123,7 +125,8 @@ const BlogPage: React.FC = () => {
             Blog & Resources
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            Expert insights on AI SEO, automation, and cutting-edge web development strategies
+            Expert insights on AI SEO, automation, and cutting-edge web
+            development strategies
           </p>
 
           {/* Search & Filter */}
@@ -150,8 +153,8 @@ const BlogPage: React.FC = () => {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-6 py-2 rounded-full font-medium transition-all ${
                     selectedCategory === category
-                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg'
-                      : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-teal-500'
+                      ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg"
+                      : "bg-white text-gray-700 border-2 border-gray-200 hover:border-teal-500"
                   }`}
                 >
                   {category}
@@ -179,7 +182,9 @@ const BlogPage: React.FC = () => {
                   transition={{ duration: 0.3 }}
                   className="w-full h-full flex items-center justify-center"
                 >
-                  <span className="text-white text-6xl font-bold opacity-20">EFS</span>
+                  <span className="text-white text-6xl font-bold opacity-20">
+                    EFS
+                  </span>
                 </motion.div>
               </div>
 

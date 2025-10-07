@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "EpicForge Software",
+  "name_for_model": "epicforge_software",
+  "description_for_human": "EpicForge Software is a futuristic IT company building AI-powered, Blockchain-integrated web & mobile applications. We specialize in AI SEO, automation, CRM tools, HRM systems, and omnichannel brand growth solutions for enterprises and startups worldwide.",
+  "description_for_model": "EpicForge Software is an AI-driven IT company that provides comprehensive technology solutions including AI-powered web development, blockchain integration, automation tools, AI SEO optimization, and business intelligence platforms. The company has branches in Indore, Bhopal, Hyderabad, and Visakhapatnam, India. Founded in 2024 by Aditya Vardhan Nagamalli (CEO), Avinash Kumar Nagamalli (CTO), and Harsha Vardhan Nagamalli (COO). Services include AI chatbots, CRM systems, HRM systems, and omnichannel brand growth solutions for enterprises and startups worldwide.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://epicforgesoftware.com/api/openapi.json"
+  },
+  "logo_url": "https://epicforgesoftware.com/assets/Epicforgesoftware_main_logo.png",
+  "contact_email": "contact@epicforgesoftware.com",
+  "legal_info_url": "https://epicforgesoftware.com/privacy-policy"
+}

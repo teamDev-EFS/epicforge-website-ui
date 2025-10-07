@@ -1,12 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { MessageCircle, X, Send, Mic, MicOff, Volume2, User, Bot } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import {
+  MessageCircle,
+  X,
+  Send,
+  Mic,
+  MicOff,
+  Volume2,
+  User,
+  Bot,
+} from "lucide-react";
 
 interface Message {
   id: number;
   text: string;
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
   timestamp: Date;
 }
 
@@ -16,24 +25,27 @@ const AIChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: t('chat.greeting'),
-      sender: 'bot',
-      timestamp: new Date()
-    }
+      text: t("chat.greeting"),
+      sender: "bot",
+      timestamp: new Date(),
+    },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [inputError, setInputError] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-US';
+      recognitionRef.current.lang = "en-US";
 
       recognitionRef.current.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
@@ -52,31 +64,64 @@ const AIChat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
+    // Enhanced validation for input
+    const trimmedInput = input.trim();
+
+    // Clear previous errors
+    setInputError("");
+
+    // Check for minimum length
+    if (trimmedInput.length < 2) {
+      setInputError("Message must be at least 2 characters long");
+      return;
+    }
+
+    // Check for maximum length to prevent spam
+    if (trimmedInput.length > 1000) {
+      setInputError("Message is too long (maximum 1000 characters)");
+      return;
+    }
+
+    // Check for potentially harmful content (basic filtering)
+    const harmfulPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /on\w+\s*=/i,
+      /<iframe/i,
+      /<object/i,
+      /<embed/i,
+    ];
+
+    if (harmfulPatterns.some((pattern) => pattern.test(trimmedInput))) {
+      setInputError("Message contains potentially harmful content");
+      return;
+    }
+
     const userMessage: Message = {
       id: messages.length + 1,
-      text: input,
-      sender: 'user',
-      timestamp: new Date()
+      text: trimmedInput,
+      sender: "user",
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
 
     setTimeout(() => {
-      const botResponse = generateBotResponse(input);
+      const botResponse = generateBotResponse(trimmedInput);
       const botMessage: Message = {
         id: messages.length + 2,
         text: botResponse,
-        sender: 'bot',
-        timestamp: new Date()
+        sender: "bot",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
 
       if (isSpeaking) {
         speakText(botResponse);
@@ -87,27 +132,43 @@ const AIChat: React.FC = () => {
   const generateBotResponse = (userInput: string): string => {
     const lowerInput = userInput.toLowerCase();
 
-    if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('quote')) {
+    if (
+      lowerInput.includes("price") ||
+      lowerInput.includes("cost") ||
+      lowerInput.includes("quote")
+    ) {
       return "I'd be happy to help with pricing! Our services are customized based on your needs. Would you like to book a free consultation call, or get an instant quote via WhatsApp?";
     }
 
-    if (lowerInput.includes('ai') || lowerInput.includes('automation')) {
+    if (lowerInput.includes("ai") || lowerInput.includes("automation")) {
       return "We specialize in AI-powered solutions including AI SEO optimization, voice assistants, chatbots, and workflow automation. Our AI systems have helped clients achieve 350% traffic growth. Would you like to learn more about a specific service?";
     }
 
-    if (lowerInput.includes('seo')) {
+    if (lowerInput.includes("seo")) {
       return "Our AI SEO service optimizes your website for both traditional Google search and modern LLM platforms like ChatGPT. We use structured data, conversational content, and advanced schema markup to ensure maximum visibility. Would you like a free SEO audit?";
     }
 
-    if (lowerInput.includes('portfolio') || lowerInput.includes('work') || lowerInput.includes('projects')) {
+    if (
+      lowerInput.includes("portfolio") ||
+      lowerInput.includes("work") ||
+      lowerInput.includes("projects")
+    ) {
       return "We've delivered 15+ projects for clients globally, including AI-powered e-commerce platforms, enterprise automation suites, and healthcare apps. Check out our Portfolio page to see detailed case studies!";
     }
 
-    if (lowerInput.includes('contact') || lowerInput.includes('call') || lowerInput.includes('meet')) {
+    if (
+      lowerInput.includes("contact") ||
+      lowerInput.includes("call") ||
+      lowerInput.includes("meet")
+    ) {
       return "Great! You can reach us at info@epicforgesoftware.com or book a free strategy call through our Contact page. We also offer instant WhatsApp consultations - just click the floating button on your screen!";
     }
 
-    if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+    if (
+      lowerInput.includes("hello") ||
+      lowerInput.includes("hi") ||
+      lowerInput.includes("hey")
+    ) {
       return "Hello! Welcome to EpicForge Software. I'm here to help you with any questions about our AI solutions, web development, or automation services. What would you like to know?";
     }
 
@@ -115,7 +176,7 @@ const AIChat: React.FC = () => {
   };
 
   const speakText = (text: string) => {
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.9;
       utterance.pitch = 1;
@@ -139,10 +200,20 @@ const AIChat: React.FC = () => {
   const toggleVoiceOutput = () => {
     setIsSpeaking(!isSpeaking);
     if (!isSpeaking && messages.length > 0) {
-      const lastBotMessage = [...messages].reverse().find(m => m.sender === 'bot');
+      const lastBotMessage = [...messages]
+        .reverse()
+        .find((m) => m.sender === "bot");
       if (lastBotMessage) {
         speakText(lastBotMessage.text);
       }
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    // Clear error when user starts typing
+    if (inputError) {
+      setInputError("");
     }
   };
 
@@ -166,11 +237,11 @@ const AIChat: React.FC = () => {
               <motion.div
                 animate={{
                   scale: [1, 1.3, 1],
-                  opacity: [1, 0, 1]
+                  opacity: [1, 0, 1],
                 }}
                 transition={{
                   duration: 2,
-                  repeat: Infinity
+                  repeat: Infinity,
                 }}
                 className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-950"
               />
@@ -196,8 +267,10 @@ const AIChat: React.FC = () => {
                   <Bot className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">{t('chat.title')}</h3>
-                  <p className="text-purple-100 text-xs">{t('chat.subtitle')}</p>
+                  <h3 className="text-white font-bold">{t("chat.title")}</h3>
+                  <p className="text-purple-100 text-xs">
+                    {t("chat.subtitle")}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -206,10 +279,14 @@ const AIChat: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleVoiceOutput}
                   className={`p-2 rounded-lg transition-colors ${
-                    isSpeaking ? 'bg-white/20' : 'bg-white/10'
+                    isSpeaking ? "bg-white/20" : "bg-white/10"
                   }`}
                 >
-                  <Volume2 className={`w-5 h-5 ${isSpeaking ? 'text-white' : 'text-white/70'}`} />
+                  <Volume2
+                    className={`w-5 h-5 ${
+                      isSpeaking ? "text-white" : "text-white/70"
+                    }`}
+                  />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
@@ -230,28 +307,43 @@ const AIChat: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
-                  <div className={`flex items-start space-x-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      message.sender === 'user'
-                        ? 'bg-gradient-to-r from-teal-600 to-cyan-600'
-                        : 'bg-gradient-to-r from-purple-600 to-pink-600'
-                    }`}>
-                      {message.sender === 'user' ? (
+                  <div
+                    className={`flex items-start space-x-2 max-w-[80%] ${
+                      message.sender === "user"
+                        ? "flex-row-reverse space-x-reverse"
+                        : ""
+                    }`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        message.sender === "user"
+                          ? "bg-gradient-to-r from-teal-600 to-cyan-600"
+                          : "bg-gradient-to-r from-purple-600 to-pink-600"
+                      }`}
+                    >
+                      {message.sender === "user" ? (
                         <User className="w-5 h-5 text-white" />
                       ) : (
                         <Bot className="w-5 h-5 text-white" />
                       )}
                     </div>
-                    <div className={`rounded-2xl p-3 ${
-                      message.sender === 'user'
-                        ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white'
-                        : 'bg-slate-800 text-gray-200'
-                    }`}>
+                    <div
+                      className={`rounded-2xl p-3 ${
+                        message.sender === "user"
+                          ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white"
+                          : "bg-slate-800 text-gray-200"
+                      }`}
+                    >
                       <p className="text-sm leading-relaxed">{message.text}</p>
                       <span className="text-xs opacity-70 mt-1 block">
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {message.timestamp.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </span>
                     </div>
                   </div>
@@ -267,10 +359,16 @@ const AIChat: React.FC = () => {
                   <input
                     type="text"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder={isListening ? 'Listening...' : t('chat.placeholder')}
-                    className="w-full bg-slate-800 text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-500"
+                    onChange={handleInputChange}
+                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                    placeholder={
+                      isListening ? "Listening..." : t("chat.placeholder")
+                    }
+                    className={`w-full bg-slate-800 text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 placeholder-gray-500 ${
+                      inputError
+                        ? "border-2 border-red-500 focus:ring-red-500"
+                        : "focus:ring-purple-500"
+                    }`}
                   />
                   {isListening && (
                     <motion.div
@@ -281,14 +379,22 @@ const AIChat: React.FC = () => {
                   )}
                 </div>
 
+                {/* Error Message */}
+                {inputError && (
+                  <div className="mt-2 text-red-400 text-sm flex items-center">
+                    <span className="w-4 h-4 mr-1">⚠️</span>
+                    <span>{inputError}</span>
+                  </div>
+                )}
+
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleVoiceInput}
                   className={`p-3 rounded-xl transition-all ${
                     isListening
-                      ? 'bg-red-500 text-white'
-                      : 'bg-purple-600 text-white hover:bg-purple-700'
+                      ? "bg-red-500 text-white"
+                      : "bg-purple-600 text-white hover:bg-purple-700"
                   }`}
                 >
                   {isListening ? (

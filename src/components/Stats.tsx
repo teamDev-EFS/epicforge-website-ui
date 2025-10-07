@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { useTranslation } from 'react-i18next';
-import { TrendingUp, FileText, Gauge, Search, Users, Briefcase, Zap } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
+import {
+  TrendingUp,
+  FileText,
+  Gauge,
+  Search,
+  Users,
+  Briefcase,
+  Zap,
+} from "lucide-react";
 
 interface StatItem {
   icon: React.ElementType;
@@ -16,48 +24,51 @@ const Stats: React.FC = () => {
   const { t } = useTranslation();
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.3
+    threshold: 0.3,
   });
 
   const stats: StatItem[] = [
     {
       icon: TrendingUp,
       value: 350,
-      suffix: '%',
-      label: t('stats.traffic'),
-      gradient: 'from-teal-600 to-cyan-600'
+      suffix: "%",
+      label: t("stats.traffic"),
+      gradient: "from-teal-600 to-cyan-600",
     },
     {
       icon: FileText,
       value: 35,
-      suffix: '+',
-      label: t('stats.articles'),
-      gradient: 'from-blue-600 to-indigo-600'
+      suffix: "+",
+      label: t("stats.articles"),
+      gradient: "from-blue-600 to-indigo-600",
     },
     {
       icon: Gauge,
       value: 85,
-      suffix: '+',
-      label: t('stats.speed'),
-      gradient: 'from-green-600 to-teal-600'
+      suffix: "+",
+      label: t("stats.speed"),
+      gradient: "from-green-600 to-teal-600",
     },
     {
       icon: Search,
       value: 22,
-      suffix: '+',
-      label: t('stats.indexed'),
-      gradient: 'from-purple-600 to-pink-600'
-    }
+      suffix: "+",
+      label: t("stats.indexed"),
+      gradient: "from-purple-600 to-pink-600",
+    },
   ];
 
   const secondaryStats = [
-    { label: t('stats.clients'), value: '57+', icon: Users },
-    { label: t('stats.delivered'), value: '15+', icon: Briefcase },
-    { label: t('stats.active'), value: '10+', icon: Zap }
+    { label: t("stats.clients"), value: "15+", icon: Users },
+    { label: t("stats.delivered"), value: "15+", icon: Briefcase },
+    { label: t("stats.active"), value: "10+", icon: Zap },
   ];
 
   return (
-    <section id="stats" className="py-24 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden">
+    <section
+      id="stats"
+      className="py-24 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden"
+    >
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
@@ -72,11 +83,9 @@ const Stats: React.FC = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {t('stats.title')}
+            {t("stats.title")}
           </h2>
-          <p className="text-xl text-gray-300">
-            {t('stats.subtitle')}
-          </p>
+          <p className="text-xl text-gray-300">{t("stats.subtitle")}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -101,8 +110,12 @@ const Stats: React.FC = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-teal-600 to-indigo-600 mb-3 group-hover:scale-110 transition-transform">
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
-              <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
+              <div className="text-3xl font-bold text-white mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-400 font-medium">
+                {stat.label}
+              </div>
             </div>
           ))}
         </motion.div>
@@ -156,7 +169,12 @@ const StatCard: React.FC<StatCardProps> = ({ stat, inView, delay }) => {
         <motion.div
           initial={{ scale: 0 }}
           animate={inView ? { scale: 1 } : {}}
-          transition={{ duration: 0.5, delay: delay + 0.2, type: 'spring', bounce: 0.5 }}
+          transition={{
+            duration: 0.5,
+            delay: delay + 0.2,
+            type: "spring",
+            bounce: 0.5,
+          }}
           className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.gradient} shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300`}
         >
           <stat.icon className="w-8 h-8 text-white" />
@@ -167,12 +185,13 @@ const StatCard: React.FC<StatCardProps> = ({ stat, inView, delay }) => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: delay + 0.4 }}
         >
-          <div className={`text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stat.gradient} mb-2`}>
-            {count}{stat.suffix}
+          <div
+            className={`text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stat.gradient} mb-2`}
+          >
+            {count}
+            {stat.suffix}
           </div>
-          <div className="text-gray-300 font-medium">
-            {stat.label}
-          </div>
+          <div className="text-gray-300 font-medium">{stat.label}</div>
         </motion.div>
       </div>
     </motion.div>

@@ -1,83 +1,204 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { Send, Bot, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
-import { saveLead, Lead } from '../lib/supabase';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { Send, Bot, Calendar, CheckCircle, AlertCircle, X } from "lucide-react";
+import { saveLead, Lead } from "../lib/supabase";
 
 const ContactForm: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.1
+    threshold: 0.1,
   });
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    businessType: '',
-    budget: '',
-    problem: ''
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    businessType: "",
+    budget: "",
+    problem: "",
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  // Validation functions
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
+  };
+
+  const validateName = (name: string): boolean => {
+    return name.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(name.trim());
+  };
+
+  const formatBudget = (amount: string): string => {
+    const num = parseFloat(amount);
+    if (isNaN(num)) return "";
+
+    if (num >= 10000000) {
+      return `₹${(num / 10000000).toFixed(1)} Crores`;
+    } else if (num >= 100000) {
+      return `₹${(num / 100000).toFixed(1)} Lakhs`;
+    } else if (num >= 1000) {
+      return `₹${(num / 1000).toFixed(1)}K`;
+    } else {
+      return `₹${num.toLocaleString()}`;
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (!validateName(formData.name)) {
+      newErrors.name =
+        "Name must be at least 2 characters and contain only letters";
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Phone validation (optional but if provided, must be valid)
+    if (formData.phone.trim() && !validatePhone(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number";
+    }
+
+    // Company validation (optional but if provided, must be valid)
+    if (formData.company.trim() && formData.company.trim().length < 2) {
+      newErrors.company = "Company name must be at least 2 characters";
+    }
+
+    // Business type validation
+    if (!formData.businessType) {
+      newErrors.businessType = "Please select a business type";
+    }
+
+    // Budget validation
+    if (!formData.budget) {
+      newErrors.budget = "Please enter your budget";
+    } else if (parseFloat(formData.budget) < 1000) {
+      newErrors.budget = "Minimum budget should be ₹1,000";
+    }
+
+    // Problem validation
+    if (!formData.problem.trim()) {
+      newErrors.problem = "Please describe your project or problem";
+    } else if (formData.problem.trim().length < 10) {
+      newErrors.problem =
+        "Please provide more details (at least 10 characters)";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
-    
+
     try {
-      const leadData: Omit<Lead, 'id' | 'created_at'> = {
+      const leadData: Lead = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
-        business_type: formData.businessType,
-        budget: formData.budget,
-        project_type: 'Custom Software',
+        businessType: formData.businessType,
+        projectType: "Custom Software",
+        budget: parseFloat(formData.budget),
         problem: formData.problem,
         language: i18n.language,
-        source: 'form',
-        qualified: formData.budget !== '' && formData.problem !== ''
+        source: "contact_form",
       };
-      
-      await saveLead(leadData);
-      
-      setSubmitStatus('success');
+
+      const result = await saveLead(leadData);
+
+      setSubmitStatus("success");
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        businessType: '',
-        budget: '',
-        problem: ''
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        businessType: "",
+        budget: "",
+        problem: "",
       });
+
+      // Show success message with budget info
+      console.log("Lead created successfully:", result.data);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
+      console.error("Error submitting form:", error);
+      setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      setTimeout(() => setSubmitStatus("idle"), 5000);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value,
     });
+
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
+  };
+
+  const clearError = (fieldName: string) => {
+    if (errors[fieldName]) {
+      setErrors({
+        ...errors,
+        [fieldName]: "",
+      });
+    }
   };
 
   const openCalendly = () => {
-    window.open('https://calendly.com/team-dev-epicforgesoftware/30min', '_blank');
+    window.open(
+      "https://calendly.com/team-dev-epicforgesoftware/30min",
+      "_blank"
+    );
   };
 
   return (
-    <section id="contact" className="py-24 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden">
+    <section
+      id="contact"
+      className="py-24 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden"
+    >
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -106,9 +227,10 @@ const ContactForm: React.FC = () => {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Ready to Transform Your Business?
           </h2>
-          
+
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Get your custom AI solution or software build. Choose your preferred way to connect.
+            Get your custom AI solution or software build. Choose your preferred
+            way to connect.
           </p>
         </motion.div>
 
@@ -121,8 +243,10 @@ const ContactForm: React.FC = () => {
             className="space-y-8"
           >
             <div>
-              <h3 className="text-2xl font-bold text-white mb-6">Quick Connect</h3>
-              
+              <h3 className="text-2xl font-bold text-white mb-6">
+                Quick Connect
+              </h3>
+
               <div className="space-y-4">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
@@ -134,8 +258,10 @@ const ContactForm: React.FC = () => {
                   <button className="relative w-full bg-transparent text-white p-6 font-semibold text-lg shadow-2xl flex items-center space-x-4">
                     <Bot className="w-8 h-8" />
                     <div className="text-left">
-                      <div className="text-xl">{t('hero.ctaAI')}</div>
-                      <div className="text-sm opacity-90">{t('hero.ctaAISubtext')}</div>
+                      <div className="text-xl">{t("hero.ctaAI")}</div>
+                      <div className="text-sm opacity-90">
+                        {t("hero.ctaAISubtext")}
+                      </div>
                     </div>
                   </button>
                 </motion.div>
@@ -151,8 +277,10 @@ const ContactForm: React.FC = () => {
                   >
                     <Calendar className="w-8 h-8" />
                     <div className="text-left">
-                      <div className="text-xl">{t('hero.ctaCall')}</div>
-                      <div className="text-sm opacity-90">{t('hero.ctaCallSubtext')}</div>
+                      <div className="text-xl">{t("hero.ctaCall")}</div>
+                      <div className="text-sm opacity-90">
+                        {t("hero.ctaCallSubtext")}
+                      </div>
                     </div>
                   </button>
                 </motion.div>
@@ -197,120 +325,275 @@ const ContactForm: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold text-white mb-6">Send Us Details</h3>
-              
+              <h3 className="text-2xl font-bold text-white mb-6">
+                Send Us Details
+              </h3>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder={t('form.name')}
-                    required
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder={t('form.email')}
-                    required
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder={t("form.name")}
+                      required
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
+                        errors.name
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    />
+                    {errors.name && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("name")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder={t("form.email")}
+                      required
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
+                        errors.email
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    />
+                    {errors.email && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.email}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("email")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder={t('form.phone')}
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    placeholder={t('form.company')}
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  />
+                  <div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder={t("form.phone")}
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
+                        errors.phone
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    />
+                    {errors.phone && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.phone}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("phone")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      placeholder={t("form.company")}
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
+                        errors.company
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    />
+                    {errors.company && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.company}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("company")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <select
-                    name="businessType"
-                    value={formData.businessType}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  >
-                    <option value="" className="bg-gray-800">{t('form.businessType')}</option>
-                    <option value="health" className="bg-gray-800">Health</option>
-                    <option value="saas" className="bg-gray-800">SaaS</option>
-                    <option value="legal" className="bg-gray-800">Legal</option>
-                    <option value="retail" className="bg-gray-800">Retail</option>
-                    <option value="auto" className="bg-gray-800">Auto</option>
-                    <option value="logistics" className="bg-gray-800">Logistics</option>
-                    <option value="other" className="bg-gray-800">Other</option>
-                  </select>
-                  <select
-                    name="budget"
-                    value={formData.budget}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  >
-                    <option value="" className="bg-gray-800">{t('form.budget')}</option>
-                    <option value="5k-15k" className="bg-gray-800">$5K - $15K</option>
-                    <option value="15k-50k" className="bg-gray-800">$15K - $50K</option>
-                    <option value="50k-100k" className="bg-gray-800">$50K - $100K</option>
-                    <option value="100k+" className="bg-gray-800">$100K+</option>
-                  </select>
+                  <div>
+                    <select
+                      name="businessType"
+                      value={formData.businessType}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
+                        errors.businessType
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    >
+                      <option value="" className="bg-gray-800">
+                        {t("form.businessType")}
+                      </option>
+                      <option value="health" className="bg-gray-800">
+                        Health
+                      </option>
+                      <option value="saas" className="bg-gray-800">
+                        SaaS
+                      </option>
+                      <option value="legal" className="bg-gray-800">
+                        Legal
+                      </option>
+                      <option value="retail" className="bg-gray-800">
+                        Retail
+                      </option>
+                      <option value="auto" className="bg-gray-800">
+                        Auto
+                      </option>
+                      <option value="logistics" className="bg-gray-800">
+                        Logistics
+                      </option>
+                      <option value="other" className="bg-gray-800">
+                        Other
+                      </option>
+                    </select>
+                    {errors.businessType && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.businessType}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("businessType")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleChange}
+                      placeholder="Enter your budget (e.g., 50000)"
+                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm placeholder-gray-400 ${
+                        errors.budget
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/30 focus:ring-blue-500"
+                      }`}
+                    />
+                    {formData.budget && (
+                      <div className="mt-2 text-sm text-cyan-400">
+                        {formatBudget(formData.budget)}
+                      </div>
+                    )}
+                    {errors.budget && (
+                      <div className="flex items-center mt-2 text-red-400 text-sm">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{errors.budget}</span>
+                        <button
+                          type="button"
+                          onClick={() => clearError("budget")}
+                          className="ml-2 hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <textarea
-                  name="problem"
-                  value={formData.problem}
-                  onChange={handleChange}
-                  placeholder={t('form.problem')}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none backdrop-blur-sm"
-                />
+                <div>
+                  <textarea
+                    name="problem"
+                    value={formData.problem}
+                    onChange={handleChange}
+                    placeholder={t("form.problem")}
+                    rows={4}
+                    className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent resize-none backdrop-blur-sm ${
+                      errors.problem
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-white/30 focus:ring-blue-500"
+                    }`}
+                  />
+                  {errors.problem && (
+                    <div className="flex items-center mt-2 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      <span>{errors.problem}</span>
+                      <button
+                        type="button"
+                        onClick={() => clearError("problem")}
+                        className="ml-2 hover:text-red-300"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting ||
+                    Object.keys(errors).some((key) => errors[key])
+                  }
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
                   <span>
-                    {isSubmitting ? t('form.submitting') : t('form.submit')}
+                    {isSubmitting ? t("form.submitting") : t("form.submit")}
                   </span>
                 </motion.button>
 
-                {submitStatus === 'success' && (
+                {submitStatus === "success" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex items-center space-x-2 text-green-400 bg-green-400/10 p-3 rounded-lg border border-green-400/20"
                   >
                     <CheckCircle className="w-5 h-5" />
-                    <span>{t('form.success')}</span>
+                    <span>{t("form.success")}</span>
                   </motion.div>
                 )}
-                
-                {submitStatus === 'error' && (
+
+                {submitStatus === "error" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex items-center space-x-2 text-red-400 bg-red-400/10 p-3 rounded-lg border border-red-400/20"
                   >
                     <AlertCircle className="w-5 h-5" />
-                    <span>{t('form.error')}</span>
+                    <span>{t("form.error")}</span>
                   </motion.div>
                 )}
               </form>
