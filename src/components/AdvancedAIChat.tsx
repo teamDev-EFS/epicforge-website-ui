@@ -449,7 +449,7 @@ We've helped educational institutions improve student engagement by 300%. What t
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed bottom-24 left-6 z-40 w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden"
+            className="fixed inset-x-4 bottom-4 h-[70vh] max-h-[600px] sm:left-6 sm:right-auto sm:top-auto sm:bottom-24 sm:w-96 sm:h-[500px] z-40 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 text-white">
@@ -478,7 +478,7 @@ We've helped educational institutions improve student engagement by 300%. What t
             </div>
 
             {/* Messages */}
-            <div className="flex-1 p-4 overflow-y-auto h-[380px] space-y-4">
+            <div className="flex-1 p-4 overflow-y-auto space-y-4 min-h-0">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}

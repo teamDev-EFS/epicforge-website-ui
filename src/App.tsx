@@ -20,7 +20,6 @@ import ContactPage from "./pages/ContactPage";
 import HelpPage from "./pages/HelpPage";
 import BlogPage from "./pages/BlogPage";
 import CaseStudyDetailPage from "./pages/CaseStudyDetailPage";
-import FloatingCTA from "./components/FloatingCTA";
 import GlobalVoiceSearch from "./components/GlobalVoiceSearch";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -88,7 +87,6 @@ function App() {
           <Footer />
           <AdvancedAIChat />
           <FloatingScrollToTop />
-          <FloatingCTA />
           <GlobalVoiceSearch />
         </div>
 
