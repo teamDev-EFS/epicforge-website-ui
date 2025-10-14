@@ -24,6 +24,8 @@ const leadSchema = Joi.object({
   projectType: Joi.string().required(),
   budget: Joi.number().min(1000).required(),
   problem: Joi.string().min(10).max(1000).required(),
+  additionalServices: Joi.array().items(Joi.string()).optional(),
+  pages: Joi.number().min(1).optional(),
   source: Joi.string().default("website"),
   language: Joi.string().default("en"),
 });

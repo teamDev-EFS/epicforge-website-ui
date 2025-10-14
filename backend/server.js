@@ -3,7 +3,18 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-require("dotenv").config();
+require("dotenv").config({ path: "./.env" });
+
+// Environment variables loaded
+console.log("Environment:", process.env.NODE_ENV || "development");
+console.log(
+  "MongoDB:",
+  process.env.MONGODB_URI ? "Connected" : "Not configured"
+);
+console.log(
+  "WhatsApp:",
+  process.env.WHATSAPP_ACCESS_TOKEN ? "Configured" : "Not configured"
+);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -78,6 +89,9 @@ connectDB();
 
 // Routes
 app.use("/api/leads", require("./routes/leads"));
+app.use("/api/quote", require("./routes/quote"));
+app.use("/api/audit", require("./routes/audit"));
+app.use("/webhooks", require("./routes/webhooks"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

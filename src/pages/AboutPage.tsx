@@ -73,20 +73,20 @@ const AboutPage: React.FC = () => {
   const values = [
     {
       icon: Lightbulb,
-      title: t("about.innovation"),
-      description: t("about.innovationText"),
+      title: t("aboutPage.innovation"),
+      description: t("aboutPage.innovationText"),
       gradient: "from-yellow-500 to-amber-600",
     },
     {
       icon: TrendingUp,
-      title: t("about.results"),
-      description: t("about.resultsText"),
+      title: t("aboutPage.results"),
+      description: t("aboutPage.resultsText"),
       gradient: "from-amber-500 to-orange-600",
     },
     {
       icon: Users,
-      title: t("about.partnership"),
-      description: t("about.partnershipText"),
+      title: t("aboutPage.partnership"),
+      description: t("aboutPage.partnershipText"),
       gradient: "from-orange-500 to-yellow-600",
     },
   ];
@@ -122,10 +122,10 @@ const AboutPage: React.FC = () => {
             className="text-center mb-16"
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 mb-6">
-              {t("about.title")}
+              {t("aboutPage.title")}
             </h1>
             <p className="text-2xl text-slate-700 font-semibold mb-8">
-              {t("about.subtitle")}
+              {t("aboutPage.subtitle")}
             </p>
           </motion.div>
 
@@ -142,11 +142,11 @@ const AboutPage: React.FC = () => {
                   <Target className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-3xl font-bold text-slate-900">
-                  {t("about.mission")}
+                  {t("aboutPage.mission")}
                 </h2>
               </div>
               <p className="text-slate-600 text-lg leading-relaxed">
-                {t("about.missionText")}
+                {t("aboutPage.missionText")}
               </p>
             </motion.div>
 
@@ -161,11 +161,11 @@ const AboutPage: React.FC = () => {
                   <Eye className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-3xl font-bold text-slate-900">
-                  {t("about.vision")}
+                  {t("aboutPage.vision")}
                 </h2>
               </div>
               <p className="text-slate-600 text-lg leading-relaxed">
-                {t("about.visionText")}
+                {t("aboutPage.visionText")}
               </p>
             </motion.div>
           </div>
@@ -178,7 +178,7 @@ const AboutPage: React.FC = () => {
             className="mb-20"
           >
             <h2 className="text-4xl font-bold text-center text-slate-900 mb-12">
-              {t("about.values")}
+              {t("aboutPage.values")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {values.map((value, index) => (
@@ -212,10 +212,10 @@ const AboutPage: React.FC = () => {
             transition={{ duration: 0.8, delay: 1.0 }}
           >
             <h2 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 mb-4">
-              Meet Our Elite Leadership
+              {t("aboutPage.leadership")}
             </h2>
             <p className="text-center text-slate-600 text-lg mb-16">
-              World-class experts forging the future of innovation
+              {t("aboutPage.leadershipSubtitle")}
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
@@ -260,7 +260,7 @@ const AboutPage: React.FC = () => {
                       {/* Professional Badge */}
                       <div className="absolute top-4 right-4 z-10">
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                          GQ Featured
+                          {t("aboutPage.gqFeatured")}
                         </div>
                       </div>
                     </div>
@@ -285,7 +285,7 @@ const AboutPage: React.FC = () => {
                         <div>
                           <h4 className="text-blue-600 font-semibold text-sm mb-2 flex items-center">
                             <Eye className="w-4 h-4 mr-2" />
-                            Vision
+                            {t("aboutPage.visionLabel")}
                           </h4>
                           <ul className="space-y-1">
                             {member.vision.map((item, idx) => (
@@ -304,7 +304,7 @@ const AboutPage: React.FC = () => {
                         <div>
                           <h4 className="text-purple-600 font-semibold text-sm mb-2 flex items-center">
                             <Target className="w-4 h-4 mr-2" />
-                            Mission
+                            {t("aboutPage.missionLabel")}
                           </h4>
                           <ul className="space-y-1">
                             {member.mission.map((item, idx) => (
@@ -335,7 +335,7 @@ const AboutPage: React.FC = () => {
                         rel="noopener noreferrer"
                         className="inline-block px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl border border-blue-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:shadow-blue-500/25 transition-all font-semibold text-center group-hover:scale-105"
                       >
-                        View LinkedIn Profile
+                        {t("aboutPage.viewLinkedIn")}
                       </a>
                     </div>
                   </div>
@@ -354,7 +354,7 @@ const AboutPage: React.FC = () => {
             <div className="inline-flex items-center space-x-3 bg-white/90 backdrop-blur-sm px-8 py-4 rounded-full border border-slate-200/50 shadow-lg">
               <Award className="w-6 h-6 text-blue-600" />
               <span className="text-slate-900 font-semibold text-lg">
-                Recognized as a Global Leader in AI-Driven IT Solutions
+                {t("aboutPage.recognized")}
               </span>
             </div>
           </motion.div>

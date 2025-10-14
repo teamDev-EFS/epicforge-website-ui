@@ -1,10 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { CheckCircle, TrendingUp, Users, Clock, Download } from "lucide-react";
 
 const CaseStudyDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
 
   const caseStudy = {
     id,
@@ -63,20 +65,22 @@ const CaseStudyDetailPage: React.FC = () => {
           className="text-center mb-12"
         >
           <span className="inline-block bg-gradient-to-r from-teal-500 to-cyan-600 px-4 py-2 rounded-full text-white text-sm font-semibold mb-4">
-            Case Study
+            {t("caseStudyPage.caseStudy")}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {caseStudy.title}
           </h1>
           <div className="flex flex-wrap justify-center gap-6 text-gray-600">
             <span>
-              <strong>Client:</strong> {caseStudy.client}
+              <strong>{t("caseStudyPage.client")}</strong> {caseStudy.client}
             </span>
             <span>
-              <strong>Industry:</strong> {caseStudy.industry}
+              <strong>{t("caseStudyPage.industry")}</strong>{" "}
+              {caseStudy.industry}
             </span>
             <span>
-              <strong>Duration:</strong> {caseStudy.duration}
+              <strong>{t("caseStudyPage.duration")}</strong>{" "}
+              {caseStudy.duration}
             </span>
           </div>
         </motion.div>
@@ -120,7 +124,7 @@ const CaseStudyDetailPage: React.FC = () => {
           className="mb-16"
         >
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            The Challenge
+            {t("caseStudyPage.theChallenge")}
           </h2>
           <div className="bg-gradient-to-br from-red-50 to-orange-50 p-8 rounded-2xl border-2 border-red-200">
             <p className="text-lg text-gray-700 leading-relaxed">
@@ -137,7 +141,7 @@ const CaseStudyDetailPage: React.FC = () => {
           className="mb-16"
         >
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Our Solution
+            {t("caseStudyPage.ourSolution")}
           </h2>
           <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-8 rounded-2xl border-2 border-teal-200 mb-8">
             <p className="text-lg text-gray-700 leading-relaxed mb-6">
@@ -199,17 +203,19 @@ const CaseStudyDetailPage: React.FC = () => {
           transition={{ delay: 0.7 }}
           className="text-center bg-gradient-to-r from-teal-600 to-cyan-600 p-12 rounded-2xl text-white"
         >
-          <h2 className="text-3xl font-bold mb-4">Want Similar Results?</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {t("caseStudyPage.wantSimilarResults")}
+          </h2>
           <p className="text-xl mb-8 opacity-90">
-            Download the full case study PDF or schedule a free consultation
+            {t("caseStudyPage.wantSimilarResultsSubtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="flex items-center justify-center space-x-2 bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105">
               <Download className="w-5 h-5" />
-              <span>Download PDF</span>
+              <span>{t("caseStudyPage.downloadPDF")}</span>
             </button>
             <button className="flex items-center justify-center space-x-2 bg-teal-800 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105">
-              <span>Schedule Consultation</span>
+              <span>{t("caseStudyPage.scheduleConsultation")}</span>
             </button>
           </div>
         </motion.div>
