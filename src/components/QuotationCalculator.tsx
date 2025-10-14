@@ -204,6 +204,8 @@ const QuotationCalculator: React.FC = () => {
         }`,
         language: i18n.language,
         source: "quotation_calculator",
+        additionalServices: additionalServices,
+        pages: pages,
       };
 
       const result = await saveLead(leadData);

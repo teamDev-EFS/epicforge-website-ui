@@ -52,6 +52,18 @@ const leadSchema = new mongoose.Schema({
     trim: true,
   },
 
+  // Additional project details
+  additionalServices: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  pages: {
+    type: Number,
+    default: 1,
+  },
+
   // Source Information
   source: {
     type: String,

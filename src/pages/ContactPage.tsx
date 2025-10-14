@@ -12,7 +12,12 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import { saveLead, Lead } from "../lib/supabase";
+import {
+  saveLead,
+  saveAuditRequest,
+  Lead,
+  AuditRequest,
+} from "../lib/supabase";
 
 const ContactPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -155,20 +160,19 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const leadData: Lead = {
+      const auditData: AuditRequest = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
         businessType: formData.source,
-        projectType: "Custom Software",
-        budget: parseFloat(formData.budget),
-        problem: formData.problem,
+        currentChallenges: formData.problem,
+        goals: `Budget: ${formData.budget}`,
         language: i18n.language,
-        source: "website_form",
+        source: "free_audit",
       };
 
-      const result = await saveLead(leadData);
+      const result = await saveAuditRequest(auditData);
 
       setSubmitStatus("success");
       setFormData({
@@ -181,10 +185,10 @@ const ContactPage: React.FC = () => {
         problem: "",
       });
 
-      // Show success message with budget info
-      console.log("Lead created successfully:", result.data);
+      // Show success message
+      console.log("Audit request created successfully:", result.data);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting audit request:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -202,11 +206,10 @@ const ContactPage: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 mb-6">
-            Ready to Transform Your Business?
+            {t("contactPage.title")}
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Get your custom AI solution or software build. Choose your preferred
-            way to connect.
+            {t("contactPage.subtitle")}
           </p>
         </motion.div>
 
@@ -226,7 +229,9 @@ const ContactPage: React.FC = () => {
                     <Phone className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-yellow-400 font-bold mb-1">Phone</h3>
+                    <h3 className="text-yellow-400 font-bold mb-1">
+                      {t("contactPage.phone")}
+                    </h3>
                     <p className="text-white text-lg">+1 (555) 123-4567</p>
                   </div>
                 </div>
@@ -243,7 +248,9 @@ const ContactPage: React.FC = () => {
                     <MapPin className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-yellow-400 font-bold mb-1">Location</h3>
+                    <h3 className="text-yellow-400 font-bold mb-1">
+                      {t("contactPage.location")}
+                    </h3>
                     <p className="text-white text-lg">
                       "301, Atulya IT Park, Bhawarkua Main Road, Indore, M.P.
                       452010,India"
@@ -264,9 +271,11 @@ const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-yellow-400 font-bold mb-1">
-                      Business Hours
+                      {t("contactPage.businessHours")}
                     </h3>
-                    <p className="text-white text-lg">Mon-Fri: 9AM - 6PM PST</p>
+                    <p className="text-white text-lg">
+                      {t("contactPage.businessHoursText")}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -280,7 +289,7 @@ const ContactPage: React.FC = () => {
               className="bg-gradient-to-br from-indigo-900/30 to-purple-900/30 backdrop-blur-xl p-8 rounded-3xl border border-indigo-500/30"
             >
               <h3 className="text-2xl font-bold text-white mb-6">
-                Quick Connect
+                {t("contactPage.quickConnect")}
               </h3>
 
               <div className="space-y-4">
@@ -291,7 +300,7 @@ const ContactPage: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5" />
-                    <span>Get a Free AI Audit</span>
+                    <span>{t("contactPage.getFreeAudit")}</span>
                   </div>
                   <span className="text-xs text-indigo-200">
                     {t("hero.ctaAISubtext")}
@@ -308,7 +317,7 @@ const ContactPage: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3">
                     <Calendar className="w-5 h-5" />
-                    <span>Book a Demo (WhatsApp)</span>
+                    <span>{t("contactPage.bookDemo")}</span>
                   </div>
                   <span className="text-xs text-green-200">
                     {t("hero.ctaCallSubtext")}
@@ -319,24 +328,24 @@ const ContactPage: React.FC = () => {
               <div className="mt-8 bg-slate-800/30 backdrop-blur-sm p-6 rounded-2xl border border-indigo-500/20">
                 <h4 className="text-cyan-400 font-semibold mb-4 flex items-center space-x-2">
                   <span className="w-2 h-2 bg-cyan-400 rounded-full"></span>
-                  <span>Free Strategy Call includes:</span>
+                  <span>{t("contactPage.freeStrategyCall")}</span>
                 </h4>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start space-x-2">
                     <span className="text-yellow-400">•</span>
-                    <span>Bottleneck analysis for your business</span>
+                    <span>{t("contactPage.bottleneckAnalysis")}</span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-yellow-400">•</span>
-                    <span>Custom AI/Software recommendations</span>
+                    <span>{t("contactPage.customRecommendations")}</span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-yellow-400">•</span>
-                    <span>Clear project scope and timeline</span>
+                    <span>{t("contactPage.projectScope")}</span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-yellow-400">•</span>
-                    <span>Transparent pricing discussion</span>
+                    <span>{t("contactPage.pricingDiscussion")}</span>
                   </li>
                 </ul>
               </div>
@@ -356,10 +365,10 @@ const ContactPage: React.FC = () => {
               className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl p-8 rounded-3xl border border-cyan-500/20"
             >
               <h3 className="text-2xl font-bold text-white mb-2">
-                Send Us Details
+                {t("contactPage.sendDetails")}
               </h3>
               <p className="text-gray-400 mb-6">
-                Fill out the form and we'll get back within 24 hours
+                {t("contactPage.sendDetailsSubtitle")}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -370,7 +379,7 @@ const ContactPage: React.FC = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Full Name"
+                      placeholder={t("contactPage.fullName")}
                       className={`bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
                         errors.name
                           ? "border-red-500 focus:border-red-500"
@@ -397,7 +406,7 @@ const ContactPage: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="Email"
+                      placeholder={t("contactPage.email")}
                       className={`bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
                         errors.email
                           ? "border-red-500 focus:border-red-500"
@@ -427,7 +436,7 @@ const ContactPage: React.FC = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="Phone"
+                      placeholder={t("contactPage.phone")}
                       className={`bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
                         errors.phone
                           ? "border-red-500 focus:border-red-500"
@@ -454,7 +463,7 @@ const ContactPage: React.FC = () => {
                       name="company"
                       value={formData.company}
                       onChange={handleChange}
-                      placeholder="Company"
+                      placeholder={t("contactPage.company")}
                       className={`bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
                         errors.company
                           ? "border-red-500 focus:border-red-500"
@@ -489,11 +498,21 @@ const ContactPage: React.FC = () => {
                           : "border-cyan-500/30 focus:border-cyan-500"
                       }`}
                     >
-                      <option value="">How did you find us?</option>
-                      <option value="google">Google Search</option>
-                      <option value="chatgpt">ChatGPT</option>
-                      <option value="social">Social Media</option>
-                      <option value="referral">Referral</option>
+                      <option value="">
+                        {t("contactPage.howDidYouFindUs")}
+                      </option>
+                      <option value="google">
+                        {t("contactPage.googleSearch")}
+                      </option>
+                      <option value="chatgpt">
+                        {t("contactPage.chatgpt")}
+                      </option>
+                      <option value="social">
+                        {t("contactPage.socialMedia")}
+                      </option>
+                      <option value="referral">
+                        {t("contactPage.referral")}
+                      </option>
                     </select>
                     {errors.source && (
                       <div className="flex items-center mt-2 text-red-400 text-sm">
@@ -515,7 +534,7 @@ const ContactPage: React.FC = () => {
                       name="budget"
                       value={formData.budget}
                       onChange={handleChange}
-                      placeholder="Enter your budget (e.g., 50000)"
+                      placeholder={t("contactPage.enterBudget")}
                       className={`bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all ${
                         errors.budget
                           ? "border-red-500 focus:border-red-500"
@@ -548,7 +567,7 @@ const ContactPage: React.FC = () => {
                     name="problem"
                     value={formData.problem}
                     onChange={handleChange}
-                    placeholder="Describe your project or problem..."
+                    placeholder={t("contactPage.describeProject")}
                     rows={4}
                     className={`w-full bg-slate-900/50 backdrop-blur-sm text-white px-4 py-3 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 resize-none ${
                       errors.problem
@@ -582,7 +601,9 @@ const ContactPage: React.FC = () => {
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>
-                    {isSubmitting ? "Submitting..." : "Get My Free Audit"}
+                    {isSubmitting
+                      ? t("contactPage.submitting")
+                      : t("contactPage.getMyFreeAudit")}
                   </span>
                   <Send className="w-5 h-5" />
                 </motion.button>
@@ -594,9 +615,7 @@ const ContactPage: React.FC = () => {
                     className="flex items-center space-x-2 text-green-400 bg-green-400/10 p-3 rounded-lg border border-green-400/20"
                   >
                     <AlertCircle className="w-5 h-5" />
-                    <span>
-                      Thank you! We'll send your audit within 24 hours.
-                    </span>
+                    <span>{t("contactPage.thankYou")}</span>
                   </motion.div>
                 )}
 
@@ -607,7 +626,7 @@ const ContactPage: React.FC = () => {
                     className="flex items-center space-x-2 text-red-400 bg-red-400/10 p-3 rounded-lg border border-red-400/20"
                   >
                     <AlertCircle className="w-5 h-5" />
-                    <span>Something went wrong. Please try again.</span>
+                    <span>{t("contactPage.somethingWentWrong")}</span>
                   </motion.div>
                 )}
               </form>

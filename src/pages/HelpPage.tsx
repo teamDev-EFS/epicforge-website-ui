@@ -18,7 +18,7 @@ const HelpPage: React.FC = () => {
 
   const faqCategories = [
     {
-      category: "Getting Started",
+      category: t("helpPage.gettingStarted"),
       icon: Book,
       faqs: [
         {
@@ -34,7 +34,7 @@ const HelpPage: React.FC = () => {
       ],
     },
     {
-      category: "AI SEO Services",
+      category: t("helpPage.aiSeoServices"),
       icon: Search,
       faqs: [
         {
@@ -55,7 +55,7 @@ const HelpPage: React.FC = () => {
       ],
     },
     {
-      category: "Development & Automation",
+      category: t("helpPage.developmentAutomation"),
       icon: MessageCircle,
       faqs: [
         {
@@ -76,7 +76,7 @@ const HelpPage: React.FC = () => {
       ],
     },
     {
-      category: "Pricing & Plans",
+      category: t("helpPage.pricingPlans"),
       icon: HelpCircle,
       faqs: [
         {
@@ -111,11 +111,10 @@ const HelpPage: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-indigo-400 mb-6">
-            Help Center
+            {t("helpPage.title")}
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-12">
-            Find answers to common questions or chat with our AI assistant for
-            instant help
+            {t("helpPage.subtitle")}
           </p>
 
           {/* Search Bar */}
@@ -125,7 +124,7 @@ const HelpPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for help..."
+              placeholder={t("helpPage.searchForHelp")}
               className="w-full bg-slate-800 text-white pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
@@ -141,30 +140,30 @@ const HelpPage: React.FC = () => {
           <div className="bg-gradient-to-br from-teal-600/20 to-cyan-600/20 backdrop-blur-sm p-6 rounded-xl border border-teal-500/20 hover:border-teal-500/50 transition-all cursor-pointer">
             <MessageCircle className="w-12 h-12 text-teal-400 mb-4" />
             <h3 className="text-white font-bold text-lg mb-2">
-              Chat with AI Assistant
+              {t("helpPage.chatWithAI")}
             </h3>
             <p className="text-gray-400 text-sm">
-              Get instant answers to your questions
+              {t("helpPage.chatWithAISubtitle")}
             </p>
           </div>
 
           <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 backdrop-blur-sm p-6 rounded-xl border border-indigo-500/20 hover:border-indigo-500/50 transition-all cursor-pointer">
             <Book className="w-12 h-12 text-indigo-400 mb-4" />
             <h3 className="text-white font-bold text-lg mb-2">
-              Browse Documentation
+              {t("helpPage.browseDocumentation")}
             </h3>
             <p className="text-gray-400 text-sm">
-              Explore our comprehensive guides
+              {t("helpPage.browseDocumentationSubtitle")}
             </p>
           </div>
 
           <div className="bg-gradient-to-br from-pink-600/20 to-rose-600/20 backdrop-blur-sm p-6 rounded-xl border border-pink-500/20 hover:border-pink-500/50 transition-all cursor-pointer">
             <Video className="w-12 h-12 text-pink-400 mb-4" />
             <h3 className="text-white font-bold text-lg mb-2">
-              Watch Tutorials
+              {t("helpPage.watchTutorials")}
             </h3>
             <p className="text-gray-400 text-sm">
-              Learn from video walkthroughs
+              {t("helpPage.watchTutorialsSubtitle")}
             </p>
           </div>
         </motion.div>
@@ -240,13 +239,13 @@ const HelpPage: React.FC = () => {
           className="mt-20 text-center bg-gradient-to-r from-teal-600/10 to-indigo-600/10 backdrop-blur-sm p-12 rounded-2xl border border-teal-500/20"
         >
           <h2 className="text-3xl font-bold text-white mb-4">
-            Still have questions?
+            {t("helpPage.stillHaveQuestions")}
           </h2>
           <p className="text-gray-300 text-lg mb-8">
-            Our team is here to help. Get in touch for personalized support.
+            {t("helpPage.stillHaveQuestionsSubtitle")}
           </p>
           <button className="bg-gradient-to-r from-teal-600 to-indigo-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-teal-500/50 transition-all hover:scale-105">
-            Contact Support
+            {t("helpPage.contactSupport")}
           </button>
         </motion.div>
       </div>

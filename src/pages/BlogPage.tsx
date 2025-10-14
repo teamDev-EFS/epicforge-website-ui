@@ -21,11 +21,11 @@ const BlogPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = [
-    "All",
-    "AI SEO",
-    "Web Development",
-    "Automation",
-    "Case Studies",
+    t("blogPage.all"),
+    t("blogPage.aiSeo"),
+    t("blogPage.webDevelopment"),
+    t("blogPage.automation"),
+    t("blogPage.caseStudies"),
   ];
 
   const blogPosts: BlogPost[] = [
@@ -81,7 +81,8 @@ const BlogPage: React.FC = () => {
 
   const filteredPosts = blogPosts.filter((post) => {
     const matchesCategory =
-      selectedCategory === "All" || post.category === selectedCategory;
+      selectedCategory === t("blogPage.all") ||
+      post.category === selectedCategory;
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -118,15 +119,14 @@ const BlogPage: React.FC = () => {
             className="inline-flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-cyan-600 px-4 py-2 rounded-full text-white text-sm font-semibold mb-6"
           >
             <TrendingUp className="w-4 h-4" />
-            <span>AI-Powered Insights</span>
+            <span>{t("blogPage.aiPoweredInsights")}</span>
           </motion.div>
 
           <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-cyan-600 to-indigo-600 mb-6">
-            Blog & Resources
+            {t("blogPage.title")}
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            Expert insights on AI SEO, automation, and cutting-edge web
-            development strategies
+            {t("blogPage.subtitle")}
           </p>
 
           {/* Search & Filter */}
@@ -139,7 +139,7 @@ const BlogPage: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search articles..."
+                  placeholder={t("blogPage.searchArticles")}
                   className="w-full bg-white border-2 border-gray-200 text-gray-900 pl-12 pr-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
                 />
               </div>
@@ -220,7 +220,7 @@ const BlogPage: React.FC = () => {
 
                 {/* Read More */}
                 <button className="flex items-center space-x-2 text-teal-600 font-semibold group-hover:text-teal-700">
-                  <span>Read Article</span>
+                  <span>{t("blogPage.readArticle")}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

@@ -43,12 +43,12 @@ const PortfolioPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const categories = [
-    "all",
-    "SaaS Platform",
-    "E-Commerce",
-    "Custom Software",
-    "AI Solution",
-    "Marketplace",
+    t("portfolioPage.all"),
+    t("portfolioPage.saasPlatform"),
+    t("portfolioPage.ecommerce"),
+    t("portfolioPage.customSoftware"),
+    t("portfolioPage.aiSolution"),
+    t("portfolioPage.marketplace"),
   ];
 
   const projects: Project[] = [
@@ -199,7 +199,7 @@ const PortfolioPage: React.FC = () => {
   ];
 
   const filteredProjects =
-    selectedCategory === "all"
+    selectedCategory === t("portfolioPage.all")
       ? projects
       : projects.filter((p) => p.category === selectedCategory);
 
@@ -214,11 +214,10 @@ const PortfolioPage: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 mb-6">
-            Our Portfolio
+            {t("portfolioPage.title")}
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Explore our collection of cutting-edge projects that have
-            transformed businesses globally
+            {t("portfolioPage.subtitle")}
           </p>
         </motion.div>
 
@@ -231,7 +230,7 @@ const PortfolioPage: React.FC = () => {
         >
           <div className="flex items-center space-x-2 text-yellow-500">
             <Filter className="w-5 h-5" />
-            <span className="font-semibold">Filter:</span>
+            <span className="font-semibold">{t("portfolioPage.filter")}</span>
           </div>
           {categories.map((category) => (
             <button
@@ -279,7 +278,7 @@ const PortfolioPage: React.FC = () => {
                     <div className="absolute top-4 left-4">
                       <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
                         <Award className="w-3 h-3" />
-                        <span>Featured</span>
+                        <span>{t("portfolioPage.featured")}</span>
                       </span>
                     </div>
                   )}
@@ -334,7 +333,7 @@ const PortfolioPage: React.FC = () => {
                       rel="noopener noreferrer"
                       className={`flex items-center justify-center space-x-2 w-full py-3 rounded-xl bg-gradient-to-r ${project.gradient} text-white font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 mt-auto`}
                     >
-                      <span>View Live Project</span>
+                      <span>{t("portfolioPage.viewLiveProject")}</span>
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   )}

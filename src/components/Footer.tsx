@@ -112,15 +112,15 @@ const Footer: React.FC = () => {
               >
                 <div className="flex items-center space-x-3 text-gray-400">
                   <Mail className="w-4 h-4 text-blue-400" />
-                  <span>contact@epicforgesoftware.com</span>
+                  <span>info@epicforgesoftware.com</span>
                 </div>
                 <div className="flex items-start space-x-3 text-gray-400">
                   <MapPin className="w-4 h-4 text-purple-400 mt-1" />
                   <div className="text-sm">
                     <div className="font-medium text-white mb-1">
-                      Our Branches:
+                      {t("footer.branches")}
                     </div>
-                    <div>Indore | Bhopal | Hyderabad | Visakhapatnam</div>
+                    <div>{t("footer.branchesText")}</div>
                   </div>
                 </div>
               </motion.div>
@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <h3 className="text-lg font-semibold mb-6 text-white">
-                Quick Links
+                {t("footer.quickLinks")}
               </h3>
               <div className="space-y-3">
                 {[
@@ -165,7 +165,7 @@ const Footer: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <h3 className="text-lg font-semibold mb-6 text-white">
-                Connect With Us
+                {t("footer.connectWithUs")}
               </h3>
               <div className="space-y-4">
                 <LanguageDropdown />
@@ -236,7 +236,7 @@ const Footer: React.FC = () => {
                 }
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
               >
-                Book a Call
+                {t("footer.bookCall")}
               </motion.button>
             </div>
           </motion.div>
