@@ -12,7 +12,6 @@
     "deploy:netlify": "npm run build && netlify deploy --prod"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.4",
     "@types/react-router-dom": "^5.3.3",
     "ag-grid-community": "^34.3.1",
     "ag-grid-react": "^34.3.1",
