@@ -12,12 +12,7 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import {
-  saveLead,
-  saveAuditRequest,
-  Lead,
-  AuditRequest,
-} from "../lib/api";
+import { saveAuditRequest, AuditRequest } from "../lib/api";
 import { trackAuditRequest, trackWhatsAppClick } from "../lib/analytics";
 import { WHATSAPP_BASE_URL } from "../lib/constants";
 
@@ -167,7 +162,9 @@ const ContactPage: React.FC = () => {
       `Phone: ${data.phone || "-"}\n` +
       `Company: ${data.company || "-"}\n` +
       `Source: ${data.source || "-"}\n` +
-      `Budget: ${data.budget ? `₹${parseFloat(data.budget).toLocaleString()}` : "-"}\n` +
+      `Budget: ${
+        data.budget ? `₹${parseFloat(data.budget).toLocaleString()}` : "-"
+      }\n` +
       `Message: ${data.problem || "-"}\n\n` +
       `I would like to get a free audit. Please connect me with the team. Thanks!`
     );
@@ -197,35 +194,33 @@ const ContactPage: React.FC = () => {
       };
 
       // Track audit request
-      trackAuditRequest({ 
-        name: formData.name, 
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        website: formData.website,
-        businessType: formData.businessType,
-        currentChallenges: formData.problem,
-        goals: formData.goals
-      });
-
-      // Save to backend and open WhatsApp simultaneously
-      const savePromise = saveAuditRequest(auditData);
-      
-      // Format WhatsApp message
-      const whatsappMessage = formatWhatsAppMessage(formData);
-      const encodedMessage = encodeURIComponent(whatsappMessage);
-      
-      // Track WhatsApp click
-      trackWhatsAppClick({ 
-        source: "audit_request", 
+      trackAuditRequest({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
-        website: formData.website,
-        businessType: formData.businessType
+        businessType: formData.source,
+        currentChallenges: formData.problem,
+        goals: `Budget: ${formData.budget}`,
       });
-      
+
+      // Save to backend and open WhatsApp simultaneously
+      const savePromise = saveAuditRequest(auditData);
+
+      // Format WhatsApp message
+      const whatsappMessage = formatWhatsAppMessage(formData);
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+
+      // Track WhatsApp click
+      trackWhatsAppClick({
+        source: "audit_request",
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        businessType: formData.source,
+      });
+
       // Open WhatsApp immediately (don't wait for backend response)
       window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
 

@@ -15,6 +15,18 @@ console.log(
   "WhatsApp:",
   process.env.WHATSAPP_ACCESS_TOKEN ? "Configured" : "Not configured"
 );
+require("dotenv").config({ path: "./.env" });
+
+// Environment variables loaded
+console.log("Environment:", process.env.NODE_ENV || "development");
+console.log(
+  "MongoDB:",
+  process.env.MONGODB_URI ? "Connected" : "Not configured"
+);
+console.log(
+  "WhatsApp:",
+  process.env.WHATSAPP_ACCESS_TOKEN ? "Configured" : "Not configured"
+);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,20 +38,20 @@ const corsOptions = {
     if (!origin) {
       return callback(null, true);
     }
-    
+
     // ALWAYS allow localhost origins (for development)
     if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
       return callback(null, true);
     }
-    
+
     // Check if we're in production mode
     const isProduction = process.env.NODE_ENV === "production";
-    
+
     // In development (not production), allow all origins
     if (!isProduction) {
       return callback(null, true);
     }
-    
+
     // Production: only allow specific origins
     const allowedOrigins = [
       "https://epicforgesoftware.com",
@@ -47,7 +59,7 @@ const corsOptions = {
       "https://epicforge-website-ui.netlify.app",
       process.env.FRONTEND_URL,
     ].filter(Boolean);
-    
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -77,9 +89,11 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 // Security middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -161,12 +175,13 @@ app.use((err, req, res, next) => {
     return res.status(403).json({
       success: false,
       message: "CORS error: Origin not allowed",
-      error: process.env.NODE_ENV === "production" 
-        ? "Origin not allowed" 
-        : `Origin ${req.headers.origin || "unknown"} is not allowed`,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Origin not allowed"
+          : `Origin ${req.headers.origin || "unknown"} is not allowed`,
     });
   }
-  
+
   console.error("Error:", err);
   res.status(err.status || 500).json({
     success: false,
