@@ -33,6 +33,7 @@ router.post("/auth/login", async (req, res) => {
 
     // Normalize email to lowercase for lookup (email is stored lowercase)
     const normalizedEmail = email.toLowerCase().trim();
+    image.png;
 
     // Debug: Check database connection
     const dbName = mongoose.connection.db
