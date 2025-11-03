@@ -64,7 +64,6 @@ const TechStack: React.FC = () => {
         { name: 'PostgreSQL', category: 'SQL' },
         { name: 'MongoDB', category: 'NoSQL' },
         { name: 'Redis', category: 'Cache' },
-        { name: 'Supabase', category: 'BaaS' },
         { name: 'Firebase', category: 'BaaS' },
         { name: 'Elasticsearch', category: 'Search' }
       ]

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -13,6 +13,22 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    if (token && user) {
+      try {
+        const userData = JSON.parse(user);
+        setIsAdmin(userData.role === "admin");
+      } catch (e) {
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
+  }, []);
 
   const handleNavigation = (path: string, sectionId?: string) => {
     setIsMenuOpen(false);
@@ -37,9 +53,11 @@ const Header: React.FC = () => {
   const navItems = [
     { key: "home", path: "/", section: "hero" },
     { key: "about", path: "/about" },
+    // { key: "company", path: "/company/epicforge-software" }, // Hidden from users - for GEO/AEO purposes only
     { key: "services", path: "/", section: "features" },
     { key: "portfolio", path: "/portfolio" },
     { key: "contact", path: "/contact" },
+    { key: "login", path: "/admin/login", label: "Login" },
   ];
 
   return (
@@ -102,12 +120,14 @@ const Header: React.FC = () => {
                     location.hash === "#features") ||
                   (item.key !== "home" &&
                     item.key !== "services" &&
-                    location.pathname === item.path)
+                    location.pathname === item.path) ||
+                  (item.key === "company" &&
+                    location.pathname.startsWith("/company"))
                     ? "text-teal-400"
                     : "text-white hover:text-teal-400"
                 }`}
               >
-                {t(`nav.${item.key}`)}
+                {item.label || t(`nav.${item.key}`)}
                 <span
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-teal-500 to-indigo-500 transition-all duration-300 ${
                     (item.key === "home" &&
@@ -118,7 +138,9 @@ const Header: React.FC = () => {
                       location.hash === "#features") ||
                     (item.key !== "home" &&
                       item.key !== "services" &&
-                      location.pathname === item.path)
+                      location.pathname === item.path) ||
+                    (item.key === "company" &&
+                      location.pathname.startsWith("/company"))
                       ? "w-full"
                       : "w-0 group-hover:w-full"
                   }`}
@@ -128,6 +150,22 @@ const Header: React.FC = () => {
 
             {/* Language Switcher */}
             <LanguageSwitcher />
+
+            {/* Admin Portal Button */}
+            {isAdmin && (
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleNavigation("/admin")}
+                className="ml-4 relative group"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300" />
+                <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl flex items-center space-x-2">
+                  <Shield size={18} />
+                  <span>Admin Portal</span>
+                </div>
+              </motion.button>
+            )}
 
             {/* CTA Button */}
             <motion.button
@@ -184,20 +222,36 @@ const Header: React.FC = () => {
                         location.hash === "#features") ||
                       (item.key !== "home" &&
                         item.key !== "services" &&
-                        location.pathname === item.path)
+                        location.pathname === item.path) ||
+                      (item.key === "company" &&
+                        location.pathname.startsWith("/company"))
                         ? "text-teal-400 bg-gradient-to-r from-teal-600/20 to-indigo-600/20 border-teal-500/30"
                         : "text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-teal-600/20 hover:to-indigo-600/20 border-transparent hover:border-teal-500/30"
                     }`}
                   >
-                    {t(`nav.${item.key}`)}
+                    {item.label || t(`nav.${item.key}`)}
                   </motion.button>
                 ))}
+
+                {/* Mobile Admin Portal Button */}
+                {isAdmin && (
+                  <motion.button
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: navItems.length * 0.05 }}
+                    onClick={() => handleNavigation("/admin")}
+                    className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Shield size={18} />
+                    <span>Admin Portal</span>
+                  </motion.button>
+                )}
 
                 {/* Mobile CTA */}
                 <motion.button
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: navItems.length * 0.05 }}
+                  transition={{ delay: (navItems.length + (isAdmin ? 1 : 0)) * 0.05 }}
                   onClick={() => handleNavigation("/contact")}
                   className="w-full mt-4 bg-gradient-to-r from-teal-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all"
                 >

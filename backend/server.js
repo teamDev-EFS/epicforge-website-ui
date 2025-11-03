@@ -19,32 +19,77 @@ console.log(
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// CORS configuration - MUST come first before other middleware
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // ALWAYS allow localhost origins (for development)
+    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+      return callback(null, true);
+    }
+    
+    // Check if we're in production mode
+    const isProduction = process.env.NODE_ENV === "production";
+    
+    // In development (not production), allow all origins
+    if (!isProduction) {
+      return callback(null, true);
+    }
+    
+    // Production: only allow specific origins
+    const allowedOrigins = [
+      "https://epicforgesoftware.com",
+      "https://www.epicforgesoftware.com",
+      "https://epicforge-website-ui.netlify.app",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.error(`[CORS] Blocked origin in production: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+    "Access-Control-Request-Method",
+    "Access-Control-Request-Headers",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  maxAge: 86400, // 24 hours - cache preflight for 24 hours
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options("*", cors(corsOptions));
+
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again later.",
+  // Skip rate limiting for OPTIONS requests (preflight)
+  skip: (req) => req.method === "OPTIONS",
 });
 app.use(limiter);
-
-// CORS configuration
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? [
-            "https://epicforgesoftware.com",
-            "https://www.epicforgesoftware.com",
-            "https://epicforge-website-ui.netlify.app",
-            process.env.FRONTEND_URL,
-          ].filter(Boolean)
-        : ["http://localhost:3000", "http://localhost:5173"],
-    credentials: true,
-  })
-);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
@@ -92,6 +137,11 @@ app.use("/api/leads", require("./routes/leads"));
 app.use("/api/quote", require("./routes/quote"));
 app.use("/api/audit", require("./routes/audit"));
 app.use("/webhooks", require("./routes/webhooks"));
+app.use("/api/analytics", require("./routes/analytics"));
+
+// Admin Auth Routes
+const { router: authRouter } = require("./routes/auth");
+app.use("/api", authRouter);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -105,10 +155,22 @@ app.get("/api/health", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+  // Handle CORS errors specifically
+  if (err.message === "Not allowed by CORS") {
+    console.warn(`[CORS] Blocked origin: ${req.headers.origin || "unknown"}`);
+    return res.status(403).json({
+      success: false,
+      message: "CORS error: Origin not allowed",
+      error: process.env.NODE_ENV === "production" 
+        ? "Origin not allowed" 
+        : `Origin ${req.headers.origin || "unknown"} is not allowed`,
+    });
+  }
+  
   console.error("Error:", err);
-  res.status(500).json({
+  res.status(err.status || 500).json({
     success: false,
-    message: "Internal server error",
+    message: err.message || "Internal server error",
     error:
       process.env.NODE_ENV === "production"
         ? "Something went wrong"

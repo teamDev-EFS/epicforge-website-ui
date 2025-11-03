@@ -10,6 +10,10 @@ import CareNestImage from "../assets/images/CareNest.png";
 import VysyarajuJewellersImage from "../assets/images/Vysyarajujewellers.png";
 import SunAutoFlowImage from "../assets/images/Sunautoflow.png";
 import InnovateAIImage from "../assets/images/InnovateAI.png";
+const SafetyPlusImage = new URL(
+  "../assets/images/SafetyPlus Protection SaaS with Admin Portal.png",
+  import.meta.url
+).href;
 
 interface Project {
   id: string;
@@ -38,6 +42,24 @@ const Portfolio: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const projects: Project[] = [
+    {
+      id: "0",
+      title: "Safety Plus Co Protection",
+      subtitle: "Protection Website + Admin Control Panel",
+      description:
+        "Dynamic marketing website backed by a complete admin control panel for content and lead management. Built for performance, SEO, and ease of operations.",
+      image: SafetyPlusImage,
+      category: "SaaS Platform",
+      tags: ["SaaS", "Admin Portal", "CMS", "Dynamic"],
+      metrics: [
+        { label: "Pages Managed", value: "50+", icon: Users },
+        { label: "Load Time", value: "<1s", icon: Zap },
+        { label: "SEO Score", value: "A+", icon: Award },
+      ],
+      liveUrl: "https://safetyplus.co.in",
+      featured: true,
+      gradient: "from-emerald-600 via-teal-500 to-cyan-500",
+    },
     {
       id: "1",
       title: "ForgeOrion",

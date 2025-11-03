@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     exclude: ["lucide-react"],
+    include: ["ag-grid-react", "ag-grid-community", "highcharts", "highcharts-react-official"],
+    esbuildOptions: {
+      resolveExtensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
+    },
   },
   build: {
     rollupOptions: {
@@ -15,10 +19,16 @@ export default defineConfig({
           router: ["react-router-dom"],
           animations: ["framer-motion"],
           icons: ["lucide-react"],
+          agGrid: ["ag-grid-community", "ag-grid-react"],
+          charts: ["highcharts", "highcharts-react-official"],
         },
       },
     },
     chunkSizeWarningLimit: 1000,
+    // Generate source maps for production (optional, can be disabled for smaller builds)
+    sourcemap: false,
+    // Minify for production (using esbuild for faster builds, drop console in production)
+    minify: "esbuild",
   },
   server: {
     port: 5173,

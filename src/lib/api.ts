@@ -1,4 +1,6 @@
-// Backend API configuration
+// Backend API client for MongoDB backend
+// Production: Uses VITE_API_BASE_URL from environment variables (Render backend)
+// Development: Falls back to localhost:5000/api if not set
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
@@ -112,3 +114,4 @@ export const saveAuditRequest = async (auditData: AuditRequest) => {
     throw error;
   }
 };
+

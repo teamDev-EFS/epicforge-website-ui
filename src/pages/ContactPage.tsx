@@ -17,7 +17,9 @@ import {
   saveAuditRequest,
   Lead,
   AuditRequest,
-} from "../lib/supabase";
+} from "../lib/api";
+import { trackAuditRequest, trackWhatsAppClick } from "../lib/analytics";
+import { WHATSAPP_BASE_URL } from "../lib/constants";
 
 const ContactPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -149,6 +151,28 @@ const ContactPage: React.FC = () => {
     }
   };
 
+  const formatWhatsAppMessage = (data: {
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    source: string;
+    budget: string;
+    problem: string;
+  }): string => {
+    return (
+      `Hi Team EpicForge\n\n` +
+      `Name: ${data.name}\n` +
+      `Email: ${data.email}\n` +
+      `Phone: ${data.phone || "-"}\n` +
+      `Company: ${data.company || "-"}\n` +
+      `Source: ${data.source || "-"}\n` +
+      `Budget: ${data.budget ? `₹${parseFloat(data.budget).toLocaleString()}` : "-"}\n` +
+      `Message: ${data.problem || "-"}\n\n` +
+      `I would like to get a free audit. Please connect me with the team. Thanks!`
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -172,7 +196,41 @@ const ContactPage: React.FC = () => {
         source: "free_audit",
       };
 
-      const result = await saveAuditRequest(auditData);
+      // Track audit request
+      trackAuditRequest({ 
+        name: formData.name, 
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        website: formData.website,
+        businessType: formData.businessType,
+        currentChallenges: formData.problem,
+        goals: formData.goals
+      });
+
+      // Save to backend and open WhatsApp simultaneously
+      const savePromise = saveAuditRequest(auditData);
+      
+      // Format WhatsApp message
+      const whatsappMessage = formatWhatsAppMessage(formData);
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      
+      // Track WhatsApp click
+      trackWhatsAppClick({ 
+        source: "audit_request", 
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        website: formData.website,
+        businessType: formData.businessType
+      });
+      
+      // Open WhatsApp immediately (don't wait for backend response)
+      window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
+
+      // Wait for backend save to complete
+      const result = await savePromise;
 
       setSubmitStatus("success");
       setFormData({
@@ -190,6 +248,7 @@ const ContactPage: React.FC = () => {
     } catch (error) {
       console.error("Error submitting audit request:", error);
       setSubmitStatus("error");
+      // Note: WhatsApp still opened even if backend save fails
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setSubmitStatus("idle"), 5000);

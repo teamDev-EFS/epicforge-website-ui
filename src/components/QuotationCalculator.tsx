@@ -1,42 +1,70 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Calculator, Send, AlertCircle, X } from "lucide-react";
+import { Calculator, AlertCircle, X, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { saveLead, Lead } from "../lib/supabase";
-import { toast } from "react-toastify";
+import { saveLead, Lead } from "../lib/api";
+import { WHATSAPP_BASE_URL } from "../lib/constants";
+import { trackWhatsAppClick } from "../lib/analytics";
 
 const QuotationCalculator: React.FC = () => {
   const { i18n } = useTranslation();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [projectType, setProjectType] = useState("");
   const [pages, setPages] = useState(5);
   const [additionalServices, setAdditionalServices] = useState<string[]>([]);
-  const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [message, setMessage] = useState("");
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validation functions
-  const validateWhatsAppNumber = (phone: string): boolean => {
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
     const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
     return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
+  };
+
+  const validateName = (name: string): boolean => {
+    return name.trim().length >= 2;
   };
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
 
-    // Project type validation
-    if (!projectType) {
-      newErrors.projectType = "Please select a project type";
-      showValidationError("Please select a project type");
+    // Name validation (required, ≥2 chars)
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (!validateName(name)) {
+      newErrors.name = "Name must be at least 2 characters";
     }
 
-    // WhatsApp number validation
-    if (!whatsappNumber.trim()) {
-      newErrors.whatsappNumber = "WhatsApp number is required";
-      showValidationError("WhatsApp number is required");
-    } else if (!validateWhatsAppNumber(whatsappNumber)) {
-      newErrors.whatsappNumber = "Please enter a valid WhatsApp number";
-      showValidationError("Please enter a valid WhatsApp number");
+    // Email validation (required, valid email)
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Phone validation (required, must be valid E.164)
+    if (!phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!validatePhone(phone)) {
+      newErrors.phone = "Please enter a valid phone number (E.164 format)";
+    }
+
+    // Project type validation (required)
+    if (!projectType) {
+      newErrors.projectType = "Please select a project type";
+    }
+
+    // Pages validation (required, 1-50)
+    if (!pages || pages < 1 || pages > 50) {
+      newErrors.pages = "Pages must be between 1 and 50";
     }
 
     setErrors(newErrors);
@@ -52,39 +80,6 @@ const QuotationCalculator: React.FC = () => {
     }
   };
 
-  // Toast notification functions
-  const showValidationError = (message: string) => {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  };
-
-  const showSuccessMessage = (message: string) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  };
-
-  const showInfoMessage = (message: string) => {
-    toast.info(message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-  };
 
   // Pricing formula as specified: Base ₹25,000 + Per Page ₹2,000 + Additional Services
   const BASE_PROJECT_SETUP = 25000;
@@ -175,144 +170,90 @@ const QuotationCalculator: React.FC = () => {
     clearError("projectType");
   };
 
-  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWhatsappNumber(e.target.value);
-    clearError("whatsappNumber");
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    clearError("name");
   };
 
-  const handleSubmit = async () => {
-    // Validate form before submission
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    clearError("email");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(e.target.value);
+    clearError("phone");
+  };
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+  };
+
+  const formatAddOns = (): string => {
+    if (additionalServices.length === 0) return "None";
+    return additionalServices
+      .map((s) => services.find((sv) => sv.value === s)?.label)
+      .join(", ");
+  };
+
+  const handleConnectWhatsApp = () => {
+    // Validate form before opening WhatsApp
     if (!validateForm()) {
       return;
     }
 
-    setIsSubmitting(true);
-    showInfoMessage("Preparing your quotation... Please wait.");
+    // Format the message according to specified format
+    const whatsappMessage =
+      `Hi Team EpicForge\n\n` +
+      `Name: ${name}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone.trim() || "-"}\n` +
+      `Project: ${projectType}\n` +
+      `Pages/Modules: ${pages}\n` +
+      `Add-ons: ${formatAddOns()}\n` +
+      `Message: ${message.trim() || "-"}\n\n` +
+      `Please connect me with the team. Thanks!`;
 
+    // URL encode the message
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+
+    // Track WhatsApp click
+    trackWhatsAppClick({ 
+      source: "quotation_calculator", 
+      name, 
+      email,
+      phone,
+      projectType,
+      pages,
+      additionalServices: additionalServices.join(", "),
+      message 
+    });
+
+    // Open WhatsApp with EpicForge's business number
+    window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
+
+    // Optionally save lead data
     try {
-      // Create lead data object
       const leadData: Lead = {
-        name: "Quotation Request",
-        email: "quotation@epicforgesoftware.com",
-        phone: whatsappNumber,
-        whatsapp: whatsappNumber,
+        name: name,
+        email: email,
+        phone: phone || "",
+        whatsapp: phone || "",
         businessType: projectType,
         projectType: projectType,
         budget: estimatedCost,
-        problem: `WhatsApp Quotation Request for ${projectType} - Pages: ${pages}, Services: ${
-          additionalServices.join(", ") || "None"
-        }`,
+        problem: `WhatsApp Quotation Request: ${message || "No additional message"}`,
         language: i18n.language,
         source: "quotation_calculator",
         additionalServices: additionalServices,
         pages: pages,
       };
 
-      const result = await saveLead(leadData);
-
-      // Format budget in INR
-      const formatBudget = (amount: number): string => {
-        if (amount >= 10000000) {
-          return `₹${(amount / 10000000).toFixed(1)} Crores`;
-        } else if (amount >= 100000) {
-          return `₹${(amount / 100000).toFixed(1)} Lakhs`;
-        } else if (amount >= 1000) {
-          return `₹${(amount / 1000).toFixed(1)}K`;
-        } else {
-          return `₹${amount.toLocaleString()}`;
-        }
-      };
-
-      // Calculate cost breakdown for WhatsApp message
-      const baseCost = BASE_PROJECT_SETUP;
-      const pagesCost = pages * PER_PAGE_COST;
-      let projectSpecificCost = 0;
-      let additionalCosts = 0;
-
-      if (projectType === "Mobile App") {
-        projectSpecificCost = MOBILE_APP_COST;
-      }
-      if (projectType === "AI Automation" || projectType === "CRM") {
-        projectSpecificCost = AI_INTEGRATION_COST;
-      }
-
-      additionalServices.forEach((service) => {
-        if (service === "chatbot") {
-          additionalCosts += CHATBOT_VOICE_COST;
-        } else if (service === "automation") {
-          additionalCosts += AI_INTEGRATION_COST;
-        }
+      saveLead(leadData).catch((error) => {
+        console.error("Error saving lead:", error);
       });
-
-      const subtotal =
-        baseCost + pagesCost + projectSpecificCost + additionalCosts;
-      const expressSurcharge = additionalServices.includes("express")
-        ? subtotal * EXPRESS_DELIVERY_SURCHARGE
-        : 0;
-      const premiumSurcharge = additionalServices.includes("premium")
-        ? subtotal * PREMIUM_UI_SURCHARGE
-        : 0;
-
-      // Open WhatsApp with the message
-      const message =
-        `Hi! I'm interested in getting a quotation for:\n\n` +
-        `📋 Project Type: ${
-          projectTypes.find((p) => p.value === projectType)?.label
-        }\n` +
-        `📄 Pages/Modules: ${pages}\n` +
-        `🎯 Additional Services: ${
-          additionalServices
-            .map((s) => services.find((sv) => sv.value === s)?.label)
-            .join(", ") || "None"
-        }\n\n` +
-        `💰 COST BREAKDOWN:\n` +
-        `• Base Setup: ₹${baseCost.toLocaleString()}\n` +
-        `• Pages (${pages} × ₹${PER_PAGE_COST}): ₹${pagesCost.toLocaleString()}\n` +
-        `${
-          projectSpecificCost > 0
-            ? `• ${projectType} Integration: ₹${projectSpecificCost.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          additionalCosts > 0
-            ? `• Additional Services: ₹${additionalCosts.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          expressSurcharge > 0
-            ? `• Express Delivery (+20%): ₹${expressSurcharge.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          premiumSurcharge > 0
-            ? `• Premium UI (+10%): ₹${premiumSurcharge.toLocaleString()}\n`
-            : ""
-        }` +
-        `• TOTAL ESTIMATED COST: ${formatBudget(estimatedCost)}\n\n` +
-        `Please send me a detailed quotation with:\n` +
-        `• Project timeline\n` +
-        `• Payment terms\n` +
-        `• Next steps\n\n` +
-        `Thank you!`;
-
-      const encodedMessage = encodeURIComponent(message);
-      window.open(
-        `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
-        "_blank"
-      );
-
-      // Show success message
-      showSuccessMessage(
-        "Quotation request sent successfully! WhatsApp will open with your detailed quote."
-      );
-      console.log("Quotation request created successfully:", result.data);
     } catch (error) {
-      console.error("Error submitting quotation request:", error);
-      showValidationError(
-        "Failed to send quotation request. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
+      console.error("Error preparing lead data:", error);
     }
   };
 
@@ -336,18 +277,19 @@ const QuotationCalculator: React.FC = () => {
         </div>
       </div>
 
-      {/* Project Type Dropdown */}
+      {/* Project Type Dropdown (Required) */}
       <div className="mb-6">
         <select
           value={projectType}
           onChange={handleProjectTypeChange}
+          required
           className={`w-full bg-slate-900/50 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 focus:outline-none transition-all appearance-none cursor-pointer ${
             errors.projectType
               ? "border-red-500 focus:border-red-500"
               : "border-cyan-500/30 focus:border-cyan-500"
           }`}
         >
-          <option value="">Select a project type</option>
+          <option value="">Select a project type*</option>
           {projectTypes.map((type) => (
             <option
               key={type.value}
@@ -384,7 +326,10 @@ const QuotationCalculator: React.FC = () => {
           min="1"
           max="50"
           value={pages}
-          onChange={(e) => setPages(parseInt(e.target.value))}
+          onChange={(e) => {
+            setPages(parseInt(e.target.value));
+            clearError("pages");
+          }}
           className="w-full h-2 bg-cyan-900/30 rounded-lg appearance-none cursor-pointer"
           style={{
             background: `linear-gradient(to right, #0891b2 0%, #0891b2 ${
@@ -398,6 +343,19 @@ const QuotationCalculator: React.FC = () => {
           <span>1</span>
           <span>50</span>
         </div>
+        {errors.pages && (
+          <div className="flex items-center mt-2 text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4 mr-1" />
+            <span>{errors.pages}</span>
+            <button
+              type="button"
+              onClick={() => clearError("pages")}
+              className="ml-2 hover:text-red-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Additional Services Dropdown */}
@@ -448,26 +406,27 @@ const QuotationCalculator: React.FC = () => {
         )}
       </div>
 
-      {/* WhatsApp Number Input */}
+      {/* Name Input (Required) */}
       <div className="mb-6">
         <input
-          type="tel"
-          value={whatsappNumber}
-          onChange={handleWhatsAppChange}
-          placeholder="Enter your WhatsApp Number*"
+          type="text"
+          value={name}
+          onChange={handleNameChange}
+          placeholder="Your Name*"
+          required
           className={`w-full bg-slate-900/50 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
-            errors.whatsappNumber
+            errors.name
               ? "border-red-500 focus:border-red-500"
               : "border-cyan-500/30 focus:border-cyan-500"
           }`}
         />
-        {errors.whatsappNumber && (
+        {errors.name && (
           <div className="flex items-center mt-2 text-red-400 text-sm">
             <AlertCircle className="w-4 h-4 mr-1" />
-            <span>{errors.whatsappNumber}</span>
+            <span>{errors.name}</span>
             <button
               type="button"
-              onClick={() => clearError("whatsappNumber")}
+              onClick={() => clearError("name")}
               className="ml-2 hover:text-red-300"
             >
               <X className="w-4 h-4" />
@@ -476,27 +435,97 @@ const QuotationCalculator: React.FC = () => {
         )}
       </div>
 
-      {/* Submit Button */}
+      {/* Email Input (Required) */}
+      <div className="mb-6">
+        <input
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          placeholder="Your Email*"
+          required
+          className={`w-full bg-slate-900/50 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
+            errors.email
+              ? "border-red-500 focus:border-red-500"
+              : "border-cyan-500/30 focus:border-cyan-500"
+          }`}
+        />
+        {errors.email && (
+          <div className="flex items-center mt-2 text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4 mr-1" />
+            <span>{errors.email}</span>
+            <button
+              type="button"
+              onClick={() => clearError("email")}
+              className="ml-2 hover:text-red-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Phone Input (Required) */}
+      <div className="mb-6">
+        <input
+          type="tel"
+          value={phone}
+          onChange={handlePhoneChange}
+          placeholder="Your Phone* (E.164 format)"
+          required
+          className={`w-full bg-slate-900/50 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 focus:outline-none transition-all placeholder-gray-500 ${
+            errors.phone
+              ? "border-red-500 focus:border-red-500"
+              : "border-cyan-500/30 focus:border-cyan-500"
+          }`}
+        />
+        {errors.phone && (
+          <div className="flex items-center mt-2 text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4 mr-1" />
+            <span>{errors.phone}</span>
+            <button
+              type="button"
+              onClick={() => clearError("phone")}
+              className="ml-2 hover:text-red-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Message Input (Optional) */}
+      <div className="mb-6">
+        <textarea
+          value={message}
+          onChange={handleMessageChange}
+          placeholder="Additional Message (Optional)"
+          rows={3}
+          className="w-full bg-slate-900/50 backdrop-blur-sm text-white px-6 py-4 rounded-xl border-2 border-cyan-500/30 focus:border-cyan-500 focus:outline-none transition-all placeholder-gray-500 resize-none"
+        />
+      </div>
+
+      {/* Connect on WhatsApp Button */}
       <motion.button
-        onClick={handleSubmit}
+        onClick={handleConnectWhatsApp}
         disabled={
+          !name ||
+          !email ||
+          !phone ||
           !projectType ||
-          !whatsappNumber ||
-          Object.keys(errors).some((key) => errors[key]) ||
-          isSubmitting
+          !pages ||
+          Object.keys(errors).some((key) => errors[key])
         }
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-8 py-5 rounded-xl font-bold text-lg shadow-2xl hover:shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-5 rounded-xl font-bold text-lg shadow-2xl hover:shadow-green-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
       >
-        <span>
-          {isSubmitting ? "Preparing Quote..." : "Get Free Quote on WhatsApp"}
-        </span>
-        <Send className="w-5 h-5" />
+        <MessageCircle className="w-5 h-5" />
+        <span>Connect on WhatsApp</span>
       </motion.button>
 
-      <p className="text-gray-500 text-xs text-center mt-4">
-        💬 Receive detailed quotation with pricing breakdown via WhatsApp
+      {/* Consent Note */}
+      <p className="text-gray-400 text-xs text-center mt-3">
+        By clicking, you agree to be contacted on WhatsApp by EpicForge.
       </p>
     </motion.div>
   );
