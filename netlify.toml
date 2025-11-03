@@ -1,8 +1,8 @@
 # Netlify Configuration for EpicForge Website
 
 [build]
-  # Build command for production
-  command = "npm run build"
+  # Build command for production - ensures clean exit
+  command = "npm ci && npm run build"
   # Directory containing the built files
   publish = "dist"
 
