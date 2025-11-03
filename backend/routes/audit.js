@@ -60,6 +60,19 @@ router.post("/", async (req, res) => {
 
     await lead.save();
 
+    // Emit Socket.IO event for new audit request (real-time notification to admin portal)
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("lead:new", {
+        leadId: lead._id,
+        source: "free_audit",
+        name: auditData.name,
+        email: auditData.email,
+        budget: "Free",
+        timestamp: new Date(),
+      });
+    }
+
     // Send notifications asynchronously
     setImmediate(async () => {
       try {
@@ -98,6 +111,18 @@ router.post("/", async (req, res) => {
           emailSent: true,
           whatsappSent: true,
         });
+
+        // Emit Socket.IO event for notification sent
+        if (io) {
+          io.emit("lead:notify", {
+            leadId: lead._id,
+            notificationsSent: {
+              email: true,
+              whatsapp: true,
+            },
+            timestamp: new Date(),
+          });
+        }
 
         console.log(
           "All notifications sent successfully for audit request:",

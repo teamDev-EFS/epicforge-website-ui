@@ -58,3 +58,12 @@ tmp/
 temp/
 *.tmp
 
+# Scripts (not needed for deployment)
+scripts/
+deploy.bat
+deploy.sh
+
+# Environment files
+env.production
+env.example
+

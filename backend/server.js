@@ -1,8 +1,10 @@
 const express = require("express");
+const http = require("http");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { Server: SocketIOServer } = require("socket.io");
 require("dotenv").config({ path: "./.env" });
 
 // Environment variables loaded
@@ -29,7 +31,59 @@ console.log(
 );
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
+
+// Allowed origins for CORS and Socket.IO
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://epicforgesoftware.com",
+  "https://www.epicforgesoftware.com",
+  "https://epicforge-website-ui.netlify.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps)
+      if (!origin) return callback(null, true);
+
+      // ALWAYS allow localhost origins (for development)
+      if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+        return callback(null, true);
+      }
+
+      // In development, allow all origins
+      if (process.env.NODE_ENV !== "production") {
+        return callback(null, true);
+      }
+
+      // Production: only allow specific origins
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+});
+
+// Store io instance in app for use in routes
+app.set("io", io);
+
+// Socket.IO connection handler
+io.on("connection", (socket) => {
+  console.log("🔌 Client connected:", socket.id);
+  socket.emit("connected", { timestamp: Date.now() });
+
+  socket.on("disconnect", () => {
+    console.log("🔌 Client disconnected:", socket.id);
+  });
+});
 
 // CORS configuration - MUST come first before other middleware
 const corsOptions = {
@@ -53,13 +107,6 @@ const corsOptions = {
     }
 
     // Production: only allow specific origins
-    const allowedOrigins = [
-      "https://epicforgesoftware.com",
-      "https://www.epicforgesoftware.com",
-      "https://epicforge-website-ui.netlify.app",
-      process.env.FRONTEND_URL,
-    ].filter(Boolean);
-
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -201,11 +248,12 @@ app.use("*", (req, res) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server with Socket.IO
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🔌 Socket.IO enabled for real-time notifications`);
 });
 
 // Graceful shutdown
