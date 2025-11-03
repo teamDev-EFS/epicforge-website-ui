@@ -9,6 +9,12 @@
 [build.environment]
   # Node version for build
   NODE_VERSION = "18"
+  # Increase build timeout (if on paid plan)
+  # BUILD_TIMEOUT = 900
+
+# Exclude large files from being processed
+[build.processing]
+  skip_processing = false
 
 # Redirect all routes to index.html for SPA routing
 [[redirects]]
