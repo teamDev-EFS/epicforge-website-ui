@@ -14,6 +14,13 @@ const Header: React.FC = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  interface NavItem {
+    key: string;
+    path: string;
+    section?: string;
+    label?: string;
+  }
+
   const handleNavigation = (path: string, sectionId?: string) => {
     setIsMenuOpen(false);
     if (location.pathname !== path) {
@@ -34,7 +41,7 @@ const Header: React.FC = () => {
     }
   };
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { key: "home", path: "/", section: "hero" },
     { key: "about", path: "/about" },
     // { key: "company", path: "/company/epicforge-software" }, // Hidden from users - for GEO/AEO purposes only
