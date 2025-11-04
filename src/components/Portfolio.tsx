@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { ExternalLink, Award, TrendingUp, Users, Zap } from "lucide-react";
+import { ExternalLink, Award, ChevronLeft, ChevronRight } from "lucide-react";
 import ForgeOrionImage from "../assets/images/forgeorion.png";
 import NamasteEximImage from "../assets/images/NamasteEximVentures.png";
 import The11EximImage from "../assets/images/The11EximOverseas.png";
@@ -23,11 +23,6 @@ interface Project {
   image: string;
   category: string;
   tags: string[];
-  metrics: {
-    label: string;
-    value: string;
-    icon: React.ElementType;
-  }[];
   liveUrl?: string;
   featured: boolean;
   gradient: string;
@@ -39,7 +34,7 @@ const Portfolio: React.FC = () => {
     threshold: 0.1,
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const projects: Project[] = [
     {
@@ -51,11 +46,6 @@ const Portfolio: React.FC = () => {
       image: SafetyPlusImage,
       category: "SaaS Platform",
       tags: ["SaaS", "Admin Portal", "CMS", "Dynamic"],
-      metrics: [
-        { label: "Pages Managed", value: "50+", icon: Users },
-        { label: "Load Time", value: "<1s", icon: Zap },
-        { label: "SEO Score", value: "A+", icon: Award },
-      ],
       liveUrl: "https://safetyplus.co.in",
       featured: true,
       gradient: "from-emerald-600 via-teal-500 to-cyan-500",
@@ -69,11 +59,6 @@ const Portfolio: React.FC = () => {
       image: ForgeOrionImage,
       category: "SaaS Platform",
       tags: ["AI/ML", "Automation", "Enterprise", "Real-time"],
-      metrics: [
-        { label: "Active Users", value: "10K+", icon: Users },
-        { label: "Automation Rate", value: "85%", icon: Zap },
-        { label: "ROI Increase", value: "240%", icon: TrendingUp },
-      ],
       liveUrl: "https://forgeorion.com",
       featured: true,
       gradient: "from-blue-600 via-cyan-500 to-teal-500",
@@ -87,11 +72,6 @@ const Portfolio: React.FC = () => {
       image: NamasteEximImage,
       category: "E-Commerce",
       tags: ["Export/Import", "E-Commerce", "Inventory", "Global Trade"],
-      metrics: [
-        { label: "Orders Processed", value: "5K+", icon: Users },
-        { label: "Countries Served", value: "25+", icon: Award },
-        { label: "Efficiency Gain", value: "65%", icon: Zap },
-      ],
       liveUrl: "https://namasteeximventures.com",
       featured: true,
       gradient: "from-green-600 via-emerald-500 to-teal-500",
@@ -105,11 +85,6 @@ const Portfolio: React.FC = () => {
       image: The11EximImage,
       category: "E-Commerce",
       tags: ["International Trade", "Customs", "Multi-Currency", "Tracking"],
-      metrics: [
-        { label: "Trade Volume", value: "$2M+", icon: TrendingUp },
-        { label: "Customs Clearance", value: "98%", icon: Award },
-        { label: "Processing Time", value: "-70%", icon: Zap },
-      ],
       liveUrl: "https://the11eximoverseas.com",
       featured: true,
       gradient: "from-purple-600 via-violet-500 to-indigo-500",
@@ -123,11 +98,6 @@ const Portfolio: React.FC = () => {
       image: VysyarajuJewellersImage,
       category: "Custom Software",
       tags: ["CRM", "HRM", "Jewellery", "Analytics"],
-      metrics: [
-        { label: "Employees Managed", value: "5000+", icon: Users },
-        { label: "Customer Base", value: "50K+", icon: Award },
-        { label: "Sales Growth", value: "+45%", icon: TrendingUp },
-      ],
       liveUrl: "https://www.vysyarajujewellers.com/",
       featured: false,
       gradient: "from-orange-600 via-amber-500 to-yellow-500",
@@ -141,11 +111,6 @@ const Portfolio: React.FC = () => {
       image: SunAutoFlowImage,
       category: "AI Solution",
       tags: ["AI Automation", "Integration", "Workflow", "API Management"],
-      metrics: [
-        { label: "Processes Automated", value: "500+", icon: Zap },
-        { label: "Integration APIs", value: "50+", icon: Award },
-        { label: "Time Saved", value: "80%", icon: TrendingUp },
-      ],
       liveUrl: "https://sunautoflow.com/",
       featured: false,
       gradient: "from-pink-600 via-rose-500 to-red-500",
@@ -159,11 +124,6 @@ const Portfolio: React.FC = () => {
       image: TrustGlobeImage,
       category: "E-Commerce",
       tags: ["Export Management", "Compliance", "Documentation", "Shipping"],
-      metrics: [
-        { label: "Exports Processed", value: "1K+", icon: Users },
-        { label: "Compliance Rate", value: "99%", icon: Award },
-        { label: "Documentation Time", value: "-60%", icon: Zap },
-      ],
       liveUrl: "https://www.trustglobeexports.com/",
       featured: false,
       gradient: "from-slate-600 via-gray-500 to-zinc-500",
@@ -177,11 +137,6 @@ const Portfolio: React.FC = () => {
       image: CareNestImage,
       category: "Marketplace",
       tags: ["Multi-Vendor", "E-Commerce", "Premium Brands", "Security"],
-      metrics: [
-        { label: "Vendors", value: "500+", icon: Users },
-        { label: "Products", value: "10K+", icon: Award },
-        { label: "Security Score", value: "A+", icon: Zap },
-      ],
       liveUrl: "https://carenest.com",
       featured: true,
       gradient: "from-indigo-600 via-blue-500 to-cyan-500",
@@ -195,37 +150,30 @@ const Portfolio: React.FC = () => {
       image: InnovateAIImage,
       category: "AI Solution",
       tags: ["AI/ML", "Blockchain", "Smart Contracts", "Enterprise"],
-      metrics: [
-        { label: "AI Models Deployed", value: "100+", icon: Zap },
-        { label: "Blockchain Transactions", value: "1M+", icon: Award },
-        { label: "Client Satisfaction", value: "98%", icon: TrendingUp },
-      ],
       liveUrl: "https://innovateaitechnologies.com/",
       featured: true,
       gradient: "from-violet-600 via-purple-500 to-pink-500",
     },
   ];
 
-  const categories = [
-    "all",
-    "SaaS Platform",
-    "E-Commerce",
-    "Custom Software",
-    "AI Solution",
-    "Marketplace",
-  ];
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % projects.length);
+  };
 
-  const filteredProjects =
-    selectedCategory === "all"
-      ? projects
-      : projects.filter((p) => p.category === selectedCategory);
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   return (
     <section
       id="portfolio"
       className="py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-40"></div>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -258,123 +206,108 @@ const Portfolio: React.FC = () => {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-3 mb-16"
-        >
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                selectedCategory === category
-                  ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg scale-105"
-                  : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm hover:shadow-md border border-gray-200"
-              }`}
-            >
-              {category === "all" ? "All Projects" : category}
-            </button>
-          ))}
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence mode="wait">
-            {filteredProjects.map((project, index) => (
+        {/* Carousel Container */}
+        <div className="relative max-w-5xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-white">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`group relative ${
-                  project.featured ? "md:col-span-2 lg:col-span-1" : ""
-                }`}
+                key={currentIndex}
+                initial={{ opacity: 0, x: 300 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -300 }}
+                transition={{ duration: 0.5 }}
+                className="relative"
               >
-                <div className="relative bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
-                  <div className="relative h-64 overflow-hidden">
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
-                    ></div>
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-xs font-semibold">
-                        {project.category}
-                      </span>
-                    </div>
-                    {project.featured && (
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                          <Award className="w-3 h-3" />
-                          <span>Featured</span>
+                <div className="relative h-[500px] md:h-[600px] overflow-hidden">
+                  <img
+                    src={projects[currentIndex].image}
+                    alt={projects[currentIndex].title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                  
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
+                    <div className="max-w-2xl">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-1 rounded-full text-xs font-semibold">
+                          {projects[currentIndex].category}
                         </span>
+                        {projects[currentIndex].featured && (
+                          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                            <Award className="w-3 h-3" />
+                            <span>Featured</span>
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex-grow">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-600 transition-all duration-300">
-                        {project.title}
+                      <h3 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                        {projects[currentIndex].title}
                       </h3>
-                      <p className="text-sm font-semibold text-blue-600 mb-3">
-                        {project.subtitle}
+                      <p className="text-lg md:text-xl text-blue-200 font-semibold mb-4">
+                        {projects[currentIndex].subtitle}
                       </p>
-                      <p className="text-gray-600 mb-4 leading-relaxed">
-                        {project.description}
+                      <p className="text-white/90 mb-6 text-base md:text-lg leading-relaxed">
+                        {projects[currentIndex].description}
                       </p>
-
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {project.tags.map((tag) => (
+                        {projects[currentIndex].tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium"
+                            className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-lg text-xs font-medium"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-
-                      <div className="grid grid-cols-3 gap-4 mb-6">
-                        {project.metrics.map((metric, idx) => (
-                          <div key={idx} className="text-center">
-                            <div
-                              className={`inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${project.gradient} text-white mb-2`}
-                            >
-                              <metric.icon className="w-5 h-5" />
-                            </div>
-                            <div className="text-lg font-bold text-gray-900">
-                              {metric.value}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {metric.label}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      {projects[currentIndex].liveUrl && (
+                        <a
+                          href={projects[currentIndex].liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r ${projects[currentIndex].gradient} text-white font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300`}
+                        >
+                          <span>View Live Project</span>
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
-
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex items-center justify-center space-x-2 w-full py-3 rounded-xl bg-gradient-to-r ${project.gradient} text-white font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 mt-auto`}
-                      >
-                        <span>View Live Project</span>
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
                   </div>
                 </div>
               </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all z-10"
+              aria-label="Previous project"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-900" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all z-10"
+              aria-label="Next project"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-900" />
+            </button>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center gap-2 mt-8">
+            {projects.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? "bg-blue-600 w-8"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
-          </AnimatePresence>
+          </div>
         </div>
       </div>
     </section>

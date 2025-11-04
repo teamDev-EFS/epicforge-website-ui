@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Calculator, AlertCircle, X, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { saveLead, Lead } from "../lib/api";
 import { WHATSAPP_BASE_URL } from "../lib/constants";
-import { trackWhatsAppClick } from "../lib/analytics";
 
 const QuotationCalculator: React.FC = () => {
   const { i18n } = useTranslation();
@@ -217,44 +215,8 @@ const QuotationCalculator: React.FC = () => {
     // URL encode the message
     const encodedMessage = encodeURIComponent(whatsappMessage);
 
-    // Track WhatsApp click
-    trackWhatsAppClick({ 
-      source: "quotation_calculator", 
-      name, 
-      email,
-      phone,
-      projectType,
-      pages,
-      additionalServices: additionalServices.join(", "),
-      message 
-    });
-
     // Open WhatsApp with EpicForge's business number
     window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
-
-    // Optionally save lead data
-    try {
-      const leadData: Lead = {
-        name: name,
-        email: email,
-        phone: phone || "",
-        whatsapp: phone || "",
-        businessType: projectType,
-        projectType: projectType,
-        budget: estimatedCost,
-        problem: `WhatsApp Quotation Request: ${message || "No additional message"}`,
-        language: i18n.language,
-        source: "quotation_calculator",
-        additionalServices: additionalServices,
-        pages: pages,
-      };
-
-      saveLead(leadData).catch((error) => {
-        console.error("Error saving lead:", error);
-      });
-    } catch (error) {
-      console.error("Error preparing lead data:", error);
-    }
   };
 
   return (

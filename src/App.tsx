@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,10 +21,6 @@ import HelpPage from "./pages/HelpPage";
 import BlogPage from "./pages/BlogPage";
 import CaseStudyDetailPage from "./pages/CaseStudyDetailPage";
 import CompanyPage from "./pages/CompanyPage";
-
-// Lazy load admin routes to code-split AG Grid and Highcharts (large libraries)
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage"));
 import GlobalVoiceSearch from "./components/GlobalVoiceSearch";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -42,20 +38,11 @@ function ScrollToTop() {
 
 function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const isAdminRoute =
-    location.pathname.startsWith("/admin") &&
-    location.pathname !== "/admin/login";
 
-  // Track page visit (only on public routes)
+  // Track page visit
   useEffect(() => {
-    if (!isAdminRoute) {
-      trackVisitor();
-    }
-  }, [location.pathname, isAdminRoute]);
-
-  if (isAdminRoute) {
-    return <>{children}</>;
-  }
+    trackVisitor();
+  }, [location.pathname]);
 
   return (
     <>
@@ -124,42 +111,6 @@ function App() {
               <Route
                 path="/case-studies/:id"
                 element={<CaseStudyDetailPage />}
-              />
-              <Route
-                path="/admin"
-                element={
-                  <Suspense
-                    fallback={
-                      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-                        <div className="text-center">
-                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                          <p className="text-slate-300">
-                            Loading Admin Dashboard...
-                          </p>
-                        </div>
-                      </div>
-                    }
-                  >
-                    <AdminDashboard />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/admin/login"
-                element={
-                  <Suspense
-                    fallback={
-                      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-                        <div className="text-center">
-                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                          <p className="text-slate-300">Loading Login...</p>
-                        </div>
-                      </div>
-                    }
-                  >
-                    <AdminLoginPage />
-                  </Suspense>
-                }
               />
             </Routes>
           </ConditionalLayout>

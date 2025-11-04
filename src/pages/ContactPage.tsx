@@ -12,8 +12,6 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import { saveAuditRequest, AuditRequest } from "../lib/api";
-import { trackAuditRequest, trackWhatsAppClick } from "../lib/analytics";
 import { WHATSAPP_BASE_URL } from "../lib/constants";
 
 const ContactPage: React.FC = () => {
@@ -181,51 +179,12 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const auditData: AuditRequest = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.source,
-        currentChallenges: formData.problem,
-        goals: `Budget: ${formData.budget}`,
-        language: i18n.language,
-        source: "free_audit",
-      };
-
-      // Track audit request
-      trackAuditRequest({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.source,
-        currentChallenges: formData.problem,
-        goals: `Budget: ${formData.budget}`,
-      });
-
-      // Save to backend and open WhatsApp simultaneously
-      const savePromise = saveAuditRequest(auditData);
-
       // Format WhatsApp message
       const whatsappMessage = formatWhatsAppMessage(formData);
       const encodedMessage = encodeURIComponent(whatsappMessage);
 
-      // Track WhatsApp click
-      trackWhatsAppClick({
-        source: "audit_request",
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.source,
-      });
-
-      // Open WhatsApp immediately (don't wait for backend response)
+      // Open WhatsApp with pre-filled message
       window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
-
-      // Wait for backend save to complete
-      const result = await savePromise;
 
       setSubmitStatus("success");
       setFormData({
@@ -237,13 +196,9 @@ const ContactPage: React.FC = () => {
         budget: "",
         problem: "",
       });
-
-      // Show success message
-      console.log("Audit request created successfully:", result.data);
     } catch (error) {
-      console.error("Error submitting audit request:", error);
+      console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
-      // Note: WhatsApp still opened even if backend save fails
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setSubmitStatus("idle"), 5000);

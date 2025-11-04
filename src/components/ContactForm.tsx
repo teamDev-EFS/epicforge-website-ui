@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Send, Bot, Calendar, CheckCircle, AlertCircle, X } from "lucide-react";
-import { saveLead, Lead } from "../lib/api";
 import { WHATSAPP_BASE_URL } from "../lib/constants";
-import { trackWhatsAppClick } from "../lib/analytics";
 
 const ContactForm: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -144,43 +142,12 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const leadData: Lead = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.businessType,
-        projectType: "Custom Software",
-        budget: parseFloat(formData.budget),
-        problem: formData.problem,
-        language: i18n.language,
-        source: "contact_form",
-      };
-
-      // Save to backend and open WhatsApp simultaneously
-      const savePromise = saveLead(leadData);
-
       // Format WhatsApp message
       const whatsappMessage = formatWhatsAppMessage(formData);
       const encodedMessage = encodeURIComponent(whatsappMessage);
 
-      // Track WhatsApp click
-      trackWhatsAppClick({
-        source: "contact_form",
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.businessType,
-        budget: formData.budget,
-        problem: formData.problem,
-      });
-
-      // Open WhatsApp immediately (don't wait for backend response)
+      // Open WhatsApp with pre-filled message
       window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
-
-      // Wait for backend save to complete
-      const result = await savePromise;
 
       setSubmitStatus("success");
       setFormData({
@@ -192,13 +159,9 @@ const ContactForm: React.FC = () => {
         budget: "",
         problem: "",
       });
-
-      // Show success message with budget info
-      console.log("Lead created successfully:", result.data);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
-      // Note: WhatsApp still opened even if backend save fails
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setSubmitStatus("idle"), 5000);
