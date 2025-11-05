@@ -12,12 +12,7 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import {
-  saveLead,
-  saveAuditRequest,
-  Lead,
-  AuditRequest,
-} from "../lib/supabase";
+import { openWhatsApp } from "../utils/whatsapp";
 
 const ContactPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -160,19 +155,22 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const auditData: AuditRequest = {
+      // Format budget for WhatsApp message
+      const formattedBudget = formData.budget
+        ? formatBudget(formData.budget)
+        : formData.budget;
+
+      // Open WhatsApp with formatted message
+      openWhatsApp({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
-        businessType: formData.source,
-        currentChallenges: formData.problem,
-        goals: `Budget: ${formData.budget}`,
-        language: i18n.language,
-        source: "free_audit",
-      };
-
-      const result = await saveAuditRequest(auditData);
+        source: formData.source,
+        budget: formattedBudget,
+        problem: formData.problem,
+        projectType: "Free Audit Request",
+      });
 
       setSubmitStatus("success");
       setFormData({
@@ -186,9 +184,9 @@ const ContactPage: React.FC = () => {
       });
 
       // Show success message
-      console.log("Audit request created successfully:", result.data);
+      console.log("WhatsApp opened successfully with form details");
     } catch (error) {
-      console.error("Error submitting audit request:", error);
+      console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

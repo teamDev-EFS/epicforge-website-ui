@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Send, Bot, Calendar, CheckCircle, AlertCircle, X } from "lucide-react";
-import { saveLead, Lead } from "../lib/supabase";
+import { openWhatsApp } from "../utils/whatsapp";
 
 const ContactForm: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -121,20 +121,22 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const leadData: Lead = {
+      // Format budget for WhatsApp message
+      const formattedBudget = formData.budget
+        ? formatBudget(formData.budget)
+        : formData.budget;
+
+      // Open WhatsApp with formatted message
+      openWhatsApp({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         company: formData.company,
         businessType: formData.businessType,
-        projectType: "Custom Software",
-        budget: parseFloat(formData.budget),
+        budget: formattedBudget,
         problem: formData.problem,
-        language: i18n.language,
-        source: "contact_form",
-      };
-
-      const result = await saveLead(leadData);
+        projectType: "Custom Software",
+      });
 
       setSubmitStatus("success");
       setFormData({
@@ -147,10 +149,10 @@ const ContactForm: React.FC = () => {
         problem: "",
       });
 
-      // Show success message with budget info
-      console.log("Lead created successfully:", result.data);
+      // Show success message
+      console.log("WhatsApp opened successfully with form details");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

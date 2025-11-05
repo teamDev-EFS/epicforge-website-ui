@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Calculator, Send, AlertCircle, X } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { saveLead, Lead } from "../lib/supabase";
 import { toast } from "react-toastify";
 
 const QuotationCalculator: React.FC = () => {
-  const { i18n } = useTranslation();
   const [projectType, setProjectType] = useState("");
   const [pages, setPages] = useState(5);
   const [additionalServices, setAdditionalServices] = useState<string[]>([]);
@@ -190,26 +187,6 @@ const QuotationCalculator: React.FC = () => {
     showInfoMessage("Preparing your quotation... Please wait.");
 
     try {
-      // Create lead data object
-      const leadData: Lead = {
-        name: "Quotation Request",
-        email: "quotation@epicforgesoftware.com",
-        phone: whatsappNumber,
-        whatsapp: whatsappNumber,
-        businessType: projectType,
-        projectType: projectType,
-        budget: estimatedCost,
-        problem: `WhatsApp Quotation Request for ${projectType} - Pages: ${pages}, Services: ${
-          additionalServices.join(", ") || "None"
-        }`,
-        language: i18n.language,
-        source: "quotation_calculator",
-        additionalServices: additionalServices,
-        pages: pages,
-      };
-
-      const result = await saveLead(leadData);
-
       // Format budget in INR
       const formatBudget = (amount: number): string => {
         if (amount >= 10000000) {
@@ -253,19 +230,23 @@ const QuotationCalculator: React.FC = () => {
         ? subtotal * PREMIUM_UI_SURCHARGE
         : 0;
 
-      // Open WhatsApp with the message
-      const message =
-        `Hi! I'm interested in getting a quotation for:\n\n` +
-        `📋 Project Type: ${
+      // Format the detailed quotation message
+      const quotationMessage =
+        `*Quotation Request - EpicForge Software*\n\n` +
+        `*Project Details:*\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `*WhatsApp Number:* ${whatsappNumber}\n` +
+        `*Project Type:* ${
           projectTypes.find((p) => p.value === projectType)?.label
         }\n` +
-        `📄 Pages/Modules: ${pages}\n` +
-        `🎯 Additional Services: ${
+        `*Pages/Modules:* ${pages}\n` +
+        `*Additional Services:* ${
           additionalServices
             .map((s) => services.find((sv) => sv.value === s)?.label)
             .join(", ") || "None"
         }\n\n` +
-        `💰 COST BREAKDOWN:\n` +
+        `*COST BREAKDOWN:*\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
         `• Base Setup: ₹${baseCost.toLocaleString()}\n` +
         `• Pages (${pages} × ₹${PER_PAGE_COST}): ₹${pagesCost.toLocaleString()}\n` +
         `${
@@ -288,29 +269,31 @@ const QuotationCalculator: React.FC = () => {
             ? `• Premium UI (+10%): ₹${premiumSurcharge.toLocaleString()}\n`
             : ""
         }` +
-        `• TOTAL ESTIMATED COST: ${formatBudget(estimatedCost)}\n\n` +
-        `Please send me a detailed quotation with:\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `• *TOTAL ESTIMATED COST:* ${formatBudget(estimatedCost)}\n\n` +
+        `*Please send me a detailed quotation with:*\n` +
         `• Project timeline\n` +
         `• Payment terms\n` +
         `• Next steps\n\n` +
         `Thank you!`;
 
-      const encodedMessage = encodeURIComponent(message);
-      window.open(
-        `https://wa.me/${whatsappNumber}?text=${encodedMessage}`,
-        "_blank"
-      );
+      // Open WhatsApp directly with the custom quotation message
+      // Use business WhatsApp number from environment variable (not user's number)
+      const encodedMessage = encodeURIComponent(quotationMessage);
+      const businessWhatsAppNumber =
+        import.meta.env.VITE_WHATSAPP_NUMBER || "919201046787";
+      const cleanNumber = businessWhatsAppNumber.replace(/[\s\+\-\(\)]/g, "");
+      const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
+      window.open(whatsappUrl, "_blank");
 
       // Show success message
       showSuccessMessage(
         "Quotation request sent successfully! WhatsApp will open with your detailed quote."
       );
-      console.log("Quotation request created successfully:", result.data);
+      console.log("Quotation request sent successfully via WhatsApp");
     } catch (error) {
-      console.error("Error submitting quotation request:", error);
-      showValidationError(
-        "Failed to send quotation request. Please try again."
-      );
+      console.error("Error opening WhatsApp:", error);
+      showValidationError("Failed to open WhatsApp. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
