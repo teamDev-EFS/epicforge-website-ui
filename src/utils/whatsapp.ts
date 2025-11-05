@@ -99,3 +99,48 @@ export function openWhatsApp(
   const url = createWhatsAppURL(formData, phoneNumber);
   window.open(url, "_blank");
 }
+
+/**
+ * Format a personalized message for booking a demo/call
+ */
+export function formatDemoBookingMessage(): string {
+  const message = `*Demo Booking Request - EpicForge Software*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Hello! I'm interested in booking a demo call to learn more about your software development services.
+
+I would like to:
+• Schedule a personalized demo
+• Understand how EpicForge can help my business
+• Discuss my project requirements
+• Learn about your development process
+
+Please let me know your available time slots, and I'll be happy to schedule a call at your convenience.
+
+Thank you!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+  return message;
+}
+
+/**
+ * Create WhatsApp URL for demo booking
+ */
+export function createDemoBookingURL(phoneNumber?: string): string {
+  const message = formatDemoBookingMessage();
+  const encodedMessage = encodeURIComponent(message);
+  const number = phoneNumber || WHATSAPP_NUMBER;
+
+  // Ensure phone number doesn't have + or spaces
+  const cleanNumber = number.replace(/[\s\+\-\(\)]/g, "");
+
+  return `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
+}
+
+/**
+ * Open WhatsApp for demo booking
+ */
+export function openDemoBooking(phoneNumber?: string): void {
+  const url = createDemoBookingURL(phoneNumber);
+  window.open(url, "_blank");
+}

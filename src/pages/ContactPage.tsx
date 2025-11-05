@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import { openWhatsApp } from "../utils/whatsapp";
+import { openWhatsApp, openDemoBooking } from "../utils/whatsapp";
 
 const ContactPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -308,9 +308,7 @@ const ContactPage: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() =>
-                    window.open("https://wa.me/15551234567", "_blank")
-                  }
+                  onClick={() => openDemoBooking()}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-green-500/50 transition-all flex items-center justify-between"
                 >
                   <div className="flex items-center space-x-3">
