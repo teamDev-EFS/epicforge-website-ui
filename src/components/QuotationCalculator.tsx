@@ -82,7 +82,6 @@ const QuotationCalculator: React.FC = () => {
     });
   };
 
-
   const projectTypes = [
     { value: "Website", label: "Website" },
     { value: "Mobile App", label: "Mobile App" },
@@ -97,7 +96,6 @@ const QuotationCalculator: React.FC = () => {
     { value: "express", label: "Express Delivery" },
     { value: "premium", label: "Premium Custom UI" },
   ];
-
 
   const toggleService = (serviceValue: string) => {
     if (additionalServices.includes(serviceValue)) {
