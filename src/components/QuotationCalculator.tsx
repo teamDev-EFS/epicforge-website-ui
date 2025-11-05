@@ -8,7 +8,6 @@ const QuotationCalculator: React.FC = () => {
   const [pages, setPages] = useState(5);
   const [additionalServices, setAdditionalServices] = useState<string[]>([]);
   const [whatsappNumber, setWhatsappNumber] = useState("");
-  const [estimatedCost, setEstimatedCost] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,14 +82,6 @@ const QuotationCalculator: React.FC = () => {
     });
   };
 
-  // Pricing formula as specified: Base ₹25,000 + Per Page ₹2,000 + Additional Services
-  const BASE_PROJECT_SETUP = 25000;
-  const PER_PAGE_COST = 2000;
-  const AI_INTEGRATION_COST = 10000;
-  const CHATBOT_VOICE_COST = 25000;
-  const MOBILE_APP_COST = 50000;
-  const EXPRESS_DELIVERY_SURCHARGE = 0.2; // 20%
-  const PREMIUM_UI_SURCHARGE = 0.1; // 10%
 
   const projectTypes = [
     { value: "Website", label: "Website" },
@@ -107,55 +98,6 @@ const QuotationCalculator: React.FC = () => {
     { value: "premium", label: "Premium Custom UI" },
   ];
 
-  React.useEffect(() => {
-    calculateCost();
-  }, [projectType, pages, additionalServices]);
-
-  const calculateCost = () => {
-    if (!projectType) {
-      setEstimatedCost(0);
-      return;
-    }
-
-    // Base project setup cost
-    let cost = BASE_PROJECT_SETUP;
-
-    // Add cost per page/module
-    cost += pages * PER_PAGE_COST;
-
-    // Add project-specific costs
-    if (projectType === "Mobile App") {
-      cost += MOBILE_APP_COST;
-    }
-
-    // Check for AI/CRM/Automation integration
-    if (projectType === "AI Automation" || projectType === "CRM") {
-      cost += AI_INTEGRATION_COST;
-    }
-
-    // Add additional services
-    additionalServices.forEach((service) => {
-      if (service === "chatbot") {
-        cost += CHATBOT_VOICE_COST;
-      } else if (service === "automation") {
-        cost += AI_INTEGRATION_COST;
-      }
-    });
-
-    // Calculate subtotal for surcharges
-    const subtotal = cost;
-
-    // Apply surcharges
-    if (additionalServices.includes("express")) {
-      cost += subtotal * EXPRESS_DELIVERY_SURCHARGE;
-    }
-
-    if (additionalServices.includes("premium")) {
-      cost += subtotal * PREMIUM_UI_SURCHARGE;
-    }
-
-    setEstimatedCost(cost);
-  };
 
   const toggleService = (serviceValue: string) => {
     if (additionalServices.includes(serviceValue)) {
@@ -184,53 +126,10 @@ const QuotationCalculator: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    showInfoMessage("Preparing your quotation... Please wait.");
+    showInfoMessage("Preparing your quotation request... Please wait.");
 
     try {
-      // Format budget in INR
-      const formatBudget = (amount: number): string => {
-        if (amount >= 10000000) {
-          return `₹${(amount / 10000000).toFixed(1)} Crores`;
-        } else if (amount >= 100000) {
-          return `₹${(amount / 100000).toFixed(1)} Lakhs`;
-        } else if (amount >= 1000) {
-          return `₹${(amount / 1000).toFixed(1)}K`;
-        } else {
-          return `₹${amount.toLocaleString()}`;
-        }
-      };
-
-      // Calculate cost breakdown for WhatsApp message
-      const baseCost = BASE_PROJECT_SETUP;
-      const pagesCost = pages * PER_PAGE_COST;
-      let projectSpecificCost = 0;
-      let additionalCosts = 0;
-
-      if (projectType === "Mobile App") {
-        projectSpecificCost = MOBILE_APP_COST;
-      }
-      if (projectType === "AI Automation" || projectType === "CRM") {
-        projectSpecificCost = AI_INTEGRATION_COST;
-      }
-
-      additionalServices.forEach((service) => {
-        if (service === "chatbot") {
-          additionalCosts += CHATBOT_VOICE_COST;
-        } else if (service === "automation") {
-          additionalCosts += AI_INTEGRATION_COST;
-        }
-      });
-
-      const subtotal =
-        baseCost + pagesCost + projectSpecificCost + additionalCosts;
-      const expressSurcharge = additionalServices.includes("express")
-        ? subtotal * EXPRESS_DELIVERY_SURCHARGE
-        : 0;
-      const premiumSurcharge = additionalServices.includes("premium")
-        ? subtotal * PREMIUM_UI_SURCHARGE
-        : 0;
-
-      // Format the detailed quotation message
+      // Format the quotation request message (without cost breakdown)
       const quotationMessage =
         `*Quotation Request - EpicForge Software*\n\n` +
         `*Project Details:*\n` +
@@ -245,35 +144,11 @@ const QuotationCalculator: React.FC = () => {
             .map((s) => services.find((sv) => sv.value === s)?.label)
             .join(", ") || "None"
         }\n\n` +
-        `*COST BREAKDOWN:*\n` +
         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `• Base Setup: ₹${baseCost.toLocaleString()}\n` +
-        `• Pages (${pages} × ₹${PER_PAGE_COST}): ₹${pagesCost.toLocaleString()}\n` +
-        `${
-          projectSpecificCost > 0
-            ? `• ${projectType} Integration: ₹${projectSpecificCost.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          additionalCosts > 0
-            ? `• Additional Services: ₹${additionalCosts.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          expressSurcharge > 0
-            ? `• Express Delivery (+20%): ₹${expressSurcharge.toLocaleString()}\n`
-            : ""
-        }` +
-        `${
-          premiumSurcharge > 0
-            ? `• Premium UI (+10%): ₹${premiumSurcharge.toLocaleString()}\n`
-            : ""
-        }` +
-        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `• *TOTAL ESTIMATED COST:* ${formatBudget(estimatedCost)}\n\n` +
-        `*Please send me a detailed quotation with:*\n` +
+        `I'm interested in discussing my project requirements and getting a detailed quotation. Please connect with me to discuss:\n\n` +
         `• Project timeline\n` +
-        `• Payment terms\n` +
+        `• Detailed requirements\n` +
+        `• Pricing and payment terms\n` +
         `• Next steps\n\n` +
         `Thank you!`;
 
