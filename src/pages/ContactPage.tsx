@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import QuotationCalculator from "../components/QuotationCalculator";
-import { WHATSAPP_BASE_URL } from "../lib/constants";
+import { openWhatsApp, openDemoBooking } from "../utils/whatsapp";
 
 const ContactPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -144,30 +144,6 @@ const ContactPage: React.FC = () => {
     }
   };
 
-  const formatWhatsAppMessage = (data: {
-    name: string;
-    email: string;
-    phone: string;
-    company: string;
-    source: string;
-    budget: string;
-    problem: string;
-  }): string => {
-    return (
-      `Hi Team EpicForge\n\n` +
-      `Name: ${data.name}\n` +
-      `Email: ${data.email}\n` +
-      `Phone: ${data.phone || "-"}\n` +
-      `Company: ${data.company || "-"}\n` +
-      `Source: ${data.source || "-"}\n` +
-      `Budget: ${
-        data.budget ? `₹${parseFloat(data.budget).toLocaleString()}` : "-"
-      }\n` +
-      `Message: ${data.problem || "-"}\n\n` +
-      `I would like to get a free audit. Please connect me with the team. Thanks!`
-    );
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -179,12 +155,22 @@ const ContactPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Format WhatsApp message
-      const whatsappMessage = formatWhatsAppMessage(formData);
-      const encodedMessage = encodeURIComponent(whatsappMessage);
+      // Format budget for WhatsApp message
+      const formattedBudget = formData.budget
+        ? formatBudget(formData.budget)
+        : formData.budget;
 
-      // Open WhatsApp with pre-filled message
-      window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
+      // Open WhatsApp with formatted message
+      openWhatsApp({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        source: formData.source,
+        budget: formattedBudget,
+        problem: formData.problem,
+        projectType: "Free Audit Request",
+      });
 
       setSubmitStatus("success");
       setFormData({
@@ -196,8 +182,10 @@ const ContactPage: React.FC = () => {
         budget: "",
         problem: "",
       });
+
+      // Show success message
+      console.log("WhatsApp opened successfully with form details");
     } catch (error) {
-      console.error("Error opening WhatsApp:", error);
       console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
     } finally {

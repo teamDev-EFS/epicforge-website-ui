@@ -61,7 +61,7 @@ const HelpPage: React.FC = () => {
         {
           question: "What technologies do you use for website development?",
           answer:
-            "We use modern technologies including React, Next.js, TypeScript, Node.js, Python, MongoDB, and cloud platforms like AWS. Our tech stack is customized based on project requirements.",
+            "We use modern technologies including React, Next.js, TypeScript, Node.js, Python, and cloud platforms like AWS and Supabase. Our tech stack is customized based on project requirements.",
         },
         {
           question: "Can you integrate AI chatbots into existing websites?",

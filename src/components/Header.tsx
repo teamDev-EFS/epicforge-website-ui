@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, Sparkles } from "lucide-react";
@@ -13,13 +13,6 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  interface NavItem {
-    key: string;
-    path: string;
-    section?: string;
-    label?: string;
-  }
 
   const handleNavigation = (path: string, sectionId?: string) => {
     setIsMenuOpen(false);
@@ -41,10 +34,9 @@ const Header: React.FC = () => {
     }
   };
 
-  const navItems: NavItem[] = [
+  const navItems = [
     { key: "home", path: "/", section: "hero" },
     { key: "about", path: "/about" },
-    // { key: "company", path: "/company/epicforge-software" }, // Hidden from users - for GEO/AEO purposes only
     { key: "services", path: "/", section: "features" },
     { key: "portfolio", path: "/portfolio" },
     { key: "contact", path: "/contact" },
@@ -110,14 +102,12 @@ const Header: React.FC = () => {
                     location.hash === "#features") ||
                   (item.key !== "home" &&
                     item.key !== "services" &&
-                    location.pathname === item.path) ||
-                  (item.key === "company" &&
-                    location.pathname.startsWith("/company"))
+                    location.pathname === item.path)
                     ? "text-teal-400"
                     : "text-white hover:text-teal-400"
                 }`}
               >
-                {item.label || t(`nav.${item.key}`)}
+                {t(`nav.${item.key}`)}
                 <span
                   className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-teal-500 to-indigo-500 transition-all duration-300 ${
                     (item.key === "home" &&
@@ -128,9 +118,7 @@ const Header: React.FC = () => {
                       location.hash === "#features") ||
                     (item.key !== "home" &&
                       item.key !== "services" &&
-                      location.pathname === item.path) ||
-                    (item.key === "company" &&
-                      location.pathname.startsWith("/company"))
+                      location.pathname === item.path)
                       ? "w-full"
                       : "w-0 group-hover:w-full"
                   }`}
@@ -196,14 +184,12 @@ const Header: React.FC = () => {
                         location.hash === "#features") ||
                       (item.key !== "home" &&
                         item.key !== "services" &&
-                        location.pathname === item.path) ||
-                      (item.key === "company" &&
-                        location.pathname.startsWith("/company"))
+                        location.pathname === item.path)
                         ? "text-teal-400 bg-gradient-to-r from-teal-600/20 to-indigo-600/20 border-teal-500/30"
                         : "text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-teal-600/20 hover:to-indigo-600/20 border-transparent hover:border-teal-500/30"
                     }`}
                   >
-                    {item.label || t(`nav.${item.key}`)}
+                    {t(`nav.${item.key}`)}
                   </motion.button>
                 ))}
 

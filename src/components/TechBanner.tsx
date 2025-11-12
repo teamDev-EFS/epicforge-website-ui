@@ -344,6 +344,14 @@ const TechBanner: React.FC = () => {
       ),
     },
     {
+      name: "Supabase",
+      logo: (
+        <div className="w-12 h-12 bg-green-600 rounded flex items-center justify-center">
+          <span className="text-white font-bold text-lg">S</span>
+        </div>
+      ),
+    },
+    {
       name: "Stripe",
       logo: (
         <div className="w-12 h-12 bg-purple-600 rounded flex items-center justify-center">

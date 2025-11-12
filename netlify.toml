@@ -1,28 +1,15 @@
-# Netlify Configuration for EpicForge Website
-
 [build]
-  # Build command - Netlify automatically runs npm ci before this
-  command = "npm run build"
-  # Directory containing the built files
   publish = "dist"
+  command = "npm run build"
 
 [build.environment]
-  # Node version for build
   NODE_VERSION = "18"
-  # Increase build timeout (if on paid plan)
-  # BUILD_TIMEOUT = 900
 
-# Exclude large files from being processed
-[build.processing]
-  skip_processing = false
-
-# Redirect all routes to index.html for SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security and performance
 [[headers]]
   for = "/*"
   [headers.values]
@@ -30,19 +17,13 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+[dev]
+  command = "npm run dev"
+  port = 5173
+  publish = "dist"

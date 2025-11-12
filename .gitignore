@@ -39,8 +39,3 @@ backend/logs
 # OS generated files
 Thumbs.db
 .DS_Store
-
-# Large image backups (temporarily excluded)
-public/*.png.backup
-public/*.jpg.backup
-public/*.jpeg.backup
