@@ -1,0 +1,69 @@
+# Exclude unnecessary files from Netlify deployment
+
+# Development files
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build and cache directories
+.cache/
+.vite/
+dist-backup/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Documentation (keep essential ones, exclude development docs)
+*.md
+!README.md
+
+# Backend files (not needed for frontend deploy)
+backend/
+server/
+
+# Large source files that shouldn't be in deployment
+*.psd
+*.ai
+*.sketch
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Scripts (not needed for deployment)
+scripts/
+deploy.bat
+deploy.sh
+
+# Environment files
+env.production
+env.example
+

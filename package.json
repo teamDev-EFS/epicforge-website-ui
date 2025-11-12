@@ -9,10 +9,9 @@
     "build:prod": "NODE_ENV=production vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy:netlify": "npm run build:prod && netlify deploy --prod"
+    "deploy:netlify": "npm run build && netlify deploy --prod"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.4",
     "@types/react-router-dom": "^5.3.3",
     "framer-motion": "^12.23.0",
     "i18next": "^25.5.3",

@@ -20,9 +20,11 @@ import ContactPage from "./pages/ContactPage";
 import HelpPage from "./pages/HelpPage";
 import BlogPage from "./pages/BlogPage";
 import CaseStudyDetailPage from "./pages/CaseStudyDetailPage";
+import CompanyPage from "./pages/CompanyPage";
 import GlobalVoiceSearch from "./components/GlobalVoiceSearch";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { trackVisitor } from "./lib/analytics";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -32,6 +34,26 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+function ConditionalLayout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  // Track page visit
+  useEffect(() => {
+    trackVisitor();
+  }, [location.pathname]);
+
+  return (
+    <>
+      <Header />
+      {children}
+      <Footer />
+      <AdvancedAIChat />
+      <FloatingScrollToTop />
+      <GlobalVoiceSearch />
+    </>
+  );
 }
 
 function App() {
@@ -74,20 +96,24 @@ function App() {
           <ScrollToTop />
           <PerformanceMonitor />
           <SEOSchemas />
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/portfolio" element={<PortfolioPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/help" element={<HelpPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/case-studies/:id" element={<CaseStudyDetailPage />} />
-          </Routes>
-          <Footer />
-          <AdvancedAIChat />
-          <FloatingScrollToTop />
-          <GlobalVoiceSearch />
+          <ConditionalLayout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/portfolio" element={<PortfolioPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route
+                path="/company/epicforge-software"
+                element={<CompanyPage />}
+              />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route
+                path="/case-studies/:id"
+                element={<CaseStudyDetailPage />}
+              />
+            </Routes>
+          </ConditionalLayout>
         </div>
 
         {/* Global Toast Container */}

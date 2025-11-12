@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Send, Bot, Calendar, CheckCircle, AlertCircle, X } from "lucide-react";
-import { openWhatsApp } from "../utils/whatsapp";
+import { WHATSAPP_BASE_URL } from "../lib/constants";
 
 const ContactForm: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -76,9 +76,11 @@ const ContactForm: React.FC = () => {
       newErrors.email = "Please enter a valid email address";
     }
 
-    // Phone validation (optional but if provided, must be valid)
-    if (formData.phone.trim() && !validatePhone(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number";
+    // Phone validation (required)
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number (E.164 format)";
     }
 
     // Company validation (optional but if provided, must be valid)
@@ -98,16 +100,35 @@ const ContactForm: React.FC = () => {
       newErrors.budget = "Minimum budget should be ₹1,000";
     }
 
-    // Problem validation
-    if (!formData.problem.trim()) {
-      newErrors.problem = "Please describe your project or problem";
-    } else if (formData.problem.trim().length < 10) {
-      newErrors.problem =
-        "Please provide more details (at least 10 characters)";
-    }
+    // Problem validation (optional)
+    // Note: Additional information is optional, so we only validate if provided
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const formatWhatsAppMessage = (data: {
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    businessType: string;
+    budget: string;
+    problem: string;
+  }): string => {
+    return (
+      `Hi Team EpicForge\n\n` +
+      `Name: ${data.name}\n` +
+      `Email: ${data.email}\n` +
+      `Phone: ${data.phone || "-"}\n` +
+      `Company: ${data.company || "-"}\n` +
+      `Business Type: ${data.businessType || "-"}\n` +
+      `Budget: ${
+        data.budget ? `₹${parseFloat(data.budget).toLocaleString()}` : "-"
+      }\n` +
+      `Message: ${data.problem || "-"}\n\n` +
+      `Please connect me with the team. Thanks!`
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,22 +142,12 @@ const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Format budget for WhatsApp message
-      const formattedBudget = formData.budget
-        ? formatBudget(formData.budget)
-        : formData.budget;
+      // Format WhatsApp message
+      const whatsappMessage = formatWhatsAppMessage(formData);
+      const encodedMessage = encodeURIComponent(whatsappMessage);
 
-      // Open WhatsApp with formatted message
-      openWhatsApp({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.businessType,
-        budget: formattedBudget,
-        problem: formData.problem,
-        projectType: "Custom Software",
-      });
+      // Open WhatsApp with pre-filled message
+      window.open(`${WHATSAPP_BASE_URL}?text=${encodedMessage}`, "_blank");
 
       setSubmitStatus("success");
       setFormData({
@@ -148,10 +159,8 @@ const ContactForm: React.FC = () => {
         budget: "",
         problem: "",
       });
-
-      // Show success message
-      console.log("WhatsApp opened successfully with form details");
     } catch (error) {
+      console.error("Error opening WhatsApp:", error);
       console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
     } finally {
@@ -398,7 +407,8 @@ const ContactForm: React.FC = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder={t("form.phone")}
+                      placeholder={t("form.phone") + "*"}
+                      required
                       className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
                         errors.phone
                           ? "border-red-500 focus:ring-red-500"
@@ -538,13 +548,9 @@ const ContactForm: React.FC = () => {
                     name="problem"
                     value={formData.problem}
                     onChange={handleChange}
-                    placeholder={t("form.problem")}
+                    placeholder={t("form.problem") + " (Optional)"}
                     rows={4}
-                    className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent resize-none backdrop-blur-sm ${
-                      errors.problem
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-white/30 focus:ring-blue-500"
-                    }`}
+                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent resize-none backdrop-blur-sm focus:ring-blue-500"
                   />
                   {errors.problem && (
                     <div className="flex items-center mt-2 text-red-400 text-sm">
