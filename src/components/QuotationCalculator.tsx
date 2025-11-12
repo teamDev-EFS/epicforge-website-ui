@@ -78,7 +78,6 @@ const QuotationCalculator: React.FC = () => {
     }
   };
 
-
   // Pricing formula as specified: Base ₹25,000 + Per Page ₹2,000 + Additional Services
   const BASE_PROJECT_SETUP = 25000;
   const PER_PAGE_COST = 2000;
@@ -102,56 +101,6 @@ const QuotationCalculator: React.FC = () => {
     { value: "express", label: "Express Delivery" },
     { value: "premium", label: "Premium Custom UI" },
   ];
-
-  React.useEffect(() => {
-    calculateCost();
-  }, [projectType, pages, additionalServices]);
-
-  const calculateCost = () => {
-    if (!projectType) {
-      setEstimatedCost(0);
-      return;
-    }
-
-    // Base project setup cost
-    let cost = BASE_PROJECT_SETUP;
-
-    // Add cost per page/module
-    cost += pages * PER_PAGE_COST;
-
-    // Add project-specific costs
-    if (projectType === "Mobile App") {
-      cost += MOBILE_APP_COST;
-    }
-
-    // Check for AI/CRM/Automation integration
-    if (projectType === "AI Automation" || projectType === "CRM") {
-      cost += AI_INTEGRATION_COST;
-    }
-
-    // Add additional services
-    additionalServices.forEach((service) => {
-      if (service === "chatbot") {
-        cost += CHATBOT_VOICE_COST;
-      } else if (service === "automation") {
-        cost += AI_INTEGRATION_COST;
-      }
-    });
-
-    // Calculate subtotal for surcharges
-    const subtotal = cost;
-
-    // Apply surcharges
-    if (additionalServices.includes("express")) {
-      cost += subtotal * EXPRESS_DELIVERY_SURCHARGE;
-    }
-
-    if (additionalServices.includes("premium")) {
-      cost += subtotal * PREMIUM_UI_SURCHARGE;
-    }
-
-    setEstimatedCost(cost);
-  };
 
   const toggleService = (serviceValue: string) => {
     if (additionalServices.includes(serviceValue)) {

@@ -161,6 +161,7 @@ const ContactForm: React.FC = () => {
       });
     } catch (error) {
       console.error("Error opening WhatsApp:", error);
+      console.error("Error opening WhatsApp:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
