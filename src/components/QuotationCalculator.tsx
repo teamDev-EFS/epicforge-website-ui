@@ -154,7 +154,7 @@ const QuotationCalculator: React.FC = () => {
       // Use business WhatsApp number from environment variable (not user's number)
       const encodedMessage = encodeURIComponent(quotationMessage);
       const businessWhatsAppNumber =
-        import.meta.env.VITE_WHATSAPP_NUMBER || "919201046787";
+        import.meta.env.VITE_WHATSAPP_NUMBER || "918179300107";
       const cleanNumber = businessWhatsAppNumber.replace(/[\s\+\-\(\)]/g, "");
       const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
       window.open(whatsappUrl, "_blank");
