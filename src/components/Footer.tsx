@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
   const handleWhatsAppClick = () => {
     const message =
       "Hi! I'm interested in EpicForge Software's services. Can you help me get started?";
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(
+    const whatsappUrl = `https://wa.me/918179300107?text=${encodeURIComponent(
       message
     )}`;
     window.open(whatsappUrl, "_blank");
