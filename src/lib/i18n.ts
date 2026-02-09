@@ -285,7 +285,7 @@ const resources = {
         legal: "Legal",
         contact: "Contact Us",
         email: "info@epicforgesoftware.com",
-        phone: "+1 (555) 123-4567",
+        phone: "+91 8639381706",
         address:
           "301, Atulya IT Park, Bhawarkua Main Road, Indore, M.P. 452010,India ",
         rights: "All Rights Reserved by EpicForgeSoftware",
@@ -499,7 +499,7 @@ const resources = {
         legal: "Legal",
         contact: "Contáctanos",
         email: "info@epicforgesoftware.com",
-        phone: "+1 (555) 123-4567",
+        phone: "+91 8639381706",
         address:
           "301, Atulya IT Park, Bhawarkua Main Road, Indore, M.P. 452010,India",
         rights: "Todos los Derechos Reservados por EpicForgeSoftware",

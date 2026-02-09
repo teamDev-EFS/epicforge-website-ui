@@ -118,7 +118,7 @@ const ContactPage: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData({
@@ -230,7 +230,7 @@ const ContactPage: React.FC = () => {
                     <h3 className="text-yellow-400 font-bold mb-1">
                       {t("contactPage.phone")}
                     </h3>
-                    <p className="text-white text-lg">+1 (555) 123-4567</p>
+                    <p className="text-white text-lg">+91 8639381706</p>
                   </div>
                 </div>
               </motion.div>
@@ -250,8 +250,8 @@ const ContactPage: React.FC = () => {
                       {t("contactPage.location")}
                     </h3>
                     <p className="text-white text-lg">
-                      "301, Atulya IT Park, Bhawarkua Main Road, Indore, M.P.
-                      452010,India"
+                      301, Atulya IT Park, Bhawarkua Main Road, Indore, M.P.
+                      452010,India
                     </p>
                   </div>
                 </div>
