@@ -6,7 +6,7 @@
 // Falls back to default if not set in environment
 // Note: This is a public business number, so it's safe to have in the frontend
 export const WHATSAPP_NUMBER =
-  import.meta.env.VITE_WHATSAPP_NUMBER || "919201046787";
+  import.meta.env.VITE_WHATSAPP_NUMBER || "918179300107";
 
 /**
  * Format form data into a structured WhatsApp message
