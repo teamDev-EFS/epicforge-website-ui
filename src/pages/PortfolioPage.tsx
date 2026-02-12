@@ -19,6 +19,7 @@ import CareNestImage from "../assets/images/CareNest.png";
 import VysyarajuJewellersImage from "../assets/images/Vysyarajujewellers.png";
 import SunAutoFlowImage from "../assets/images/Sunautoflow.png";
 import InnovateAIImage from "../assets/images/InnovateAI.png";
+import SraavyamImage from "../assets/images/Sraavyam_The_Andhra_Kitchen.png";
 
 interface Project {
   id: string;
@@ -52,6 +53,24 @@ const PortfolioPage: React.FC = () => {
   ];
 
   const projects: Project[] = [
+    {
+      id: "9",
+      title: "Sraavyam - The Andhra Kitchen",
+      subtitle: "Premium multi-outlet restaurant web application",
+      description:
+        "Sraavyam – The Andhra Kitchen is a premium multi-outlet restaurant web application for an Andhra cuisine restaurant chain in Indore, India. Features online ordering, outlet management, menu management, and reservation support.",
+      image: SraavyamImage,
+      category: "Custom Software",
+      tags: ["Restaurant", "Multi-outlet", "Ordering", "Reservations"],
+      metrics: [
+        { label: "Outlets", value: "3+", icon: Users },
+        { label: "Daily Orders", value: "200+", icon: TrendingUp },
+        { label: "Customer Rating", value: "4.7/5", icon: Award },
+      ],
+      liveUrl: undefined,
+      featured: true,
+      gradient: "from-orange-600 via-amber-500 to-yellow-500",
+    },
     {
       id: "1",
       title: "ForgeOrion",
