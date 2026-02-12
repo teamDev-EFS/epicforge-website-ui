@@ -10,6 +10,7 @@ import CareNestImage from "../assets/images/CareNest.png";
 import VysyarajuJewellersImage from "../assets/images/Vysyarajujewellers.png";
 import SunAutoFlowImage from "../assets/images/Sunautoflow.png";
 import InnovateAIImage from "../assets/images/InnovateAI.png";
+import SraavyamImage from "../assets/images/Sraavyam_The_Andhra_Kitchen.png";
 
 interface Project {
   id: string;
@@ -40,6 +41,24 @@ const Portfolio: React.FC = () => {
   const projects: Project[] = [
     {
       id: "1",
+      title: "Sraavyam - The Andhra Kitchen",
+      subtitle: "Premium multi-outlet restaurant web application",
+      description:
+        "Sraavyam – The Andhra Kitchen is a premium multi-outlet restaurant web application for an Andhra cuisine restaurant chain in Indore, India. Features online ordering, outlet management, menu management, and reservation support.",
+      image: SraavyamImage,
+      category: "Custom Software",
+      tags: ["Restaurant", "Multi-outlet", "Ordering", "Reservations"],
+      metrics: [
+        { label: "Outlets", value: "3+", icon: Users },
+        { label: "Daily Orders", value: "200+", icon: TrendingUp },
+        { label: "Customer Rating", value: "4.7/5", icon: Award },
+      ],
+      liveUrl: "https://www.thesraavyam.com",
+      featured: true,
+      gradient: "from-orange-600 via-amber-500 to-yellow-500",
+    },
+    {
+      id: "2",
       title: "ForgeOrion",
       subtitle: "AI-Powered Workflow Automation Platform",
       description:
@@ -57,7 +76,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-blue-600 via-cyan-500 to-teal-500",
     },
     {
-      id: "2",
+      id: "3",
       title: "NamasteExim",
       subtitle: "Export Import Business Platform",
       description:
@@ -75,7 +94,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-green-600 via-emerald-500 to-teal-500",
     },
     {
-      id: "3",
+      id: "4",
       title: "The11EximOverseas",
       subtitle: "International Trade Management System",
       description:
@@ -93,7 +112,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-purple-600 via-violet-500 to-indigo-500",
     },
     {
-      id: "4",
+      id: "5",
       title: "VysyarajuJewellers-Connect",
       subtitle: "Jewellery Employee Management CRM & HRM",
       description:
@@ -111,7 +130,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-orange-600 via-amber-500 to-yellow-500",
     },
     {
-      id: "5",
+      id: "6",
       title: "SunAutoFlow AI",
       subtitle: "AI-Powered Automation & Integration Platform",
       description:
@@ -129,7 +148,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-pink-600 via-rose-500 to-red-500",
     },
     {
-      id: "6",
+      id: "7",
       title: "TrustGlobeExports",
       subtitle: "Global Export Management System",
       description:
@@ -147,7 +166,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-slate-600 via-gray-500 to-zinc-500",
     },
     {
-      id: "7",
+      id: "8",
       title: "CareNestGlobal",
       subtitle: "Multi-Vendor Marketplace Platform",
       description:
@@ -165,7 +184,7 @@ const Portfolio: React.FC = () => {
       gradient: "from-indigo-600 via-blue-500 to-cyan-500",
     },
     {
-      id: "8",
+      id: "9",
       title: "InnovateAITechnologies",
       subtitle: "AI & Blockchain Technology Solutions",
       description:
