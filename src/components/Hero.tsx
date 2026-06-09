@@ -241,20 +241,27 @@ const Hero: React.FC = () => {
 
           {/* LEFT */}
           <div>
-            {/* Badge */}
+            {/* Badge + pain-point hook */}
             <motion.div
               initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2.5 mb-10"
+              className="flex flex-col gap-3 mb-10"
             >
-              <div className="flex items-center gap-2.5 px-4 py-2 rounded-full" style={{ background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.3)" }}>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                </span>
-                <span className="text-[13px] font-semibold text-indigo-300">AI Software Development Agency</span>
+              <div className="inline-flex">
+                <div className="flex items-center gap-2.5 px-4 py-2 rounded-full" style={{ background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.3)" }}>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                  </span>
+                  <span className="text-[13px] font-semibold text-indigo-300">AI Software Development Agency · USA · UK · Canada</span>
+                </div>
               </div>
+              <p className="text-[14px] text-slate-500 leading-relaxed max-w-md">
+                If your team is losing <span className="text-slate-300 font-semibold">30+ hours a week</span> to manual processes,
+                or your product idea is stuck without the right dev team —
+                <span className="text-slate-300 font-semibold"> that's exactly the problem we fix.</span>
+              </p>
             </motion.div>
 
             {/* Headline */}
@@ -285,7 +292,7 @@ const Hero: React.FC = () => {
             {/* Rotating subtitle */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
-              className="flex items-center gap-2 flex-wrap mb-10 text-base sm:text-lg"
+              className="flex items-center gap-2 flex-wrap mb-5 text-base sm:text-lg"
             >
               <span className="text-slate-400">We build</span>
               <span className="relative inline-flex min-w-[200px]">
@@ -304,7 +311,34 @@ const Hero: React.FC = () => {
                 </AnimatePresence>
                 <span className="opacity-0 font-bold">AI-Powered Platforms</span>
               </span>
-              <span className="text-slate-400">for ambitious companies worldwide.</span>
+              <span className="text-slate-400">for companies in</span>
+              <span className="font-semibold text-slate-300">US · UK · Canada</span>
+              <span className="text-slate-400">and beyond.</span>
+            </motion.div>
+
+            {/* ICP qualifier strip — who this is for */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.72 }}
+              className="flex flex-wrap items-center gap-2 mb-10"
+            >
+              <span className="text-xs text-slate-600 font-medium uppercase tracking-wider mr-1">Built for:</span>
+              {[
+                "Startups scaling fast",
+                "Ops teams drowning in manual work",
+                "CTOs modernising legacy systems",
+                "Founders launching their MVP",
+              ].map((label) => (
+                <span
+                  key={label}
+                  className="text-[12px] font-medium text-slate-400 px-3 py-1 rounded-full"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                  }}
+                >
+                  {label}
+                </span>
+              ))}
             </motion.div>
 
             {/* CTAs */}

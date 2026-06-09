@@ -6,6 +6,7 @@ import ServicesShowcase from "../components/ServicesShowcase";
 import ProcessSection from "../components/ProcessSection";
 import TechBanner from "../components/TechBanner";
 import Portfolio from "../components/Portfolio";
+import Testimonials from "../components/Testimonials";
 import UrgencyBanner from "../components/UrgencyBanner";
 import ScheduleSection from "../components/ScheduleSection";
 import FAQSection from "../components/FAQSection";
@@ -24,6 +25,7 @@ const HomePage: React.FC = () => {
       <section id="portfolio-preview" className="py-0">
         <Portfolio />
       </section>
+      <Testimonials />
       <UrgencyBanner />
       <ScheduleSection />
       <FAQSection />
