@@ -113,12 +113,50 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="format-detection" content="telephone=no" />
 
     <!-- ═══════════════════════════════════════════════════════════════
+         GOOGLE CONSENT MODE v2 — Must load BEFORE gtag.js
+         Defaults all storage to 'denied' until user accepts.
+         Required for UK GDPR, EEA, and Canadian PIPEDA compliance.
+    ═══════════════════════════════════════════════════════════════ -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      // Consent Mode v2 — deny all by default
+      gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+      });
+
+      // Restore stored consent on page load (avoids re-prompting returning visitors)
+      (function() {
+        try {
+          var stored = localStorage.getItem('epicforge_consent_v2');
+          if (stored) {
+            var c = JSON.parse(stored);
+            gtag('consent', 'update', {
+              analytics_storage:     c.analytics  ? 'granted' : 'denied',
+              ad_storage:            c.marketing  ? 'granted' : 'denied',
+              ad_user_data:          c.marketing  ? 'granted' : 'denied',
+              ad_personalization:    c.marketing  ? 'granted' : 'denied',
+              functionality_storage: c.functional ? 'granted' : 'denied',
+              personalization_storage: c.functional ? 'granted' : 'denied'
+            });
+          }
+        } catch(e) {}
+      })();
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════
          GOOGLE ANALYTICS 4
     ═══════════════════════════════════════════════════════════════ -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BDLH9L0EKK"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-BDLH9L0EKK');
     </script>

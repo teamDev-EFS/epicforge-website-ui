@@ -22,6 +22,7 @@ import CaseStudyDetailPage from "./pages/CaseStudyDetailPage";
 import GlobalVoiceSearch from "./components/GlobalVoiceSearch";
 import FloatingCTA from "./components/FloatingCTA";
 import CalendlyModal from "./components/CalendlyModal";
+import CookieConsentBanner from "./components/CookieConsentBanner";
 import { CalendlyProvider } from "./contexts/CalendlyContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -93,6 +94,8 @@ function AppInner() {
         <FloatingCTA />
         {/* Global Calendly modal — shows all 3 call types */}
         <CalendlyModal />
+        {/* GDPR / PIPEDA cookie consent — Consent Mode v2 */}
+        <CookieConsentBanner />
       </div>
 
       <ToastContainer
