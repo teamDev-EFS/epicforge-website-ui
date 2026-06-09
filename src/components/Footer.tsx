@@ -51,11 +51,12 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white relative overflow-hidden">
+    <footer className="text-white relative overflow-hidden" style={{ background: "#0f172a" }}>
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(99,102,241,0.06)" }} />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: "rgba(139,92,246,0.06)" }} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(99,102,241,0.04)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
       </div>
 
       <div className="relative py-16">
@@ -81,15 +82,15 @@ const Footer: React.FC = () => {
                     className="text-2xl font-bold cursor-pointer inline-block"
                     whileHover={{
                       scale: 1.05,
-                      textShadow: "0 0 20px rgba(59, 130, 246, 0.5)",
+                      textShadow: "0 0 20px rgba(99, 102, 241, 0.5)",
                     }}
                     transition={{ duration: 0.3 }}
                   >
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-300 hover:to-purple-300 transition-all duration-300">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400 hover:from-indigo-300 hover:to-violet-300 transition-all duration-300">
                       EpicForge Software
                     </span>
                   </motion.span>
-                  <div className="text-sm text-blue-400 font-medium">
+                  <div className="text-sm text-indigo-400 font-medium">
                     {t("footer.tagline")}
                   </div>
                 </div>
@@ -111,7 +112,7 @@ const Footer: React.FC = () => {
                 className="space-y-3"
               >
                 <div className="flex items-center space-x-3 text-gray-400">
-                  <Mail className="w-4 h-4 text-blue-400" />
+                  <Mail className="w-4 h-4 text-indigo-400" />
                   <span>info@epicforgesoftware.com</span>
                 </div>
                 <div className="flex items-start space-x-3 text-gray-400">
@@ -234,7 +235,7 @@ const Footer: React.FC = () => {
                     "_blank"
                   )
                 }
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
+                className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300"
               >
                 {t("footer.bookCall")}
               </motion.button>

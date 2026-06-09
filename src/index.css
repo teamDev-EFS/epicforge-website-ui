@@ -22,7 +22,17 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
+    background-color: #0f172a;
+    color: #f1f5f9;
   }
+
+  /* Dark scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #1e293b; }
+  ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.5); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.75); }
+
+  ::selection { background: rgba(99,102,241,0.35); color: #ffffff; }
 
   img {
     max-width: 100%;
@@ -53,26 +63,13 @@
 }
 
 @layer utilities {
-  .delay-100 {
-    animation-delay: 100ms;
-  }
-  .delay-200 {
-    animation-delay: 200ms;
-  }
-  .delay-500 {
-    animation-delay: 500ms;
-  }
-  .delay-1000 {
-    animation-delay: 1000ms;
-  }
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-1000 { animation-delay: 1000ms; }
 
-  .will-change-transform {
-    will-change: transform;
-  }
-
-  .will-change-opacity {
-    will-change: opacity;
-  }
+  .will-change-transform { will-change: transform; }
+  .will-change-opacity { will-change: opacity; }
 
   .gpu-accelerated {
     transform: translateZ(0);
@@ -80,15 +77,7 @@
     perspective: 1000px;
   }
 
-  .scroll-smooth {
-    scroll-behavior: smooth;
-  }
-
-  .touch-manipulation {
-    touch-action: manipulation;
-  }
-
-  .text-balance {
-    text-wrap: balance;
-  }
+  .scroll-smooth { scroll-behavior: smooth; }
+  .touch-manipulation { touch-action: manipulation; }
+  .text-balance { text-wrap: balance; }
 }

@@ -1,158 +1,60 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { Send, Bot, Calendar, CheckCircle, AlertCircle, X } from "lucide-react";
+import { Send, Bot, Calendar, CheckCircle, AlertCircle, X, ArrowRight } from "lucide-react";
 import { openWhatsApp } from "../utils/whatsapp";
 
 const ContactForm: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    businessType: "",
-    budget: "",
-    problem: "",
+    name: "", email: "", phone: "", company: "",
+    businessType: "", budget: "", problem: "",
   });
-
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 
-  // Validation functions
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhone = (phone: string): boolean => {
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
-  };
-
-  const validateName = (name: string): boolean => {
-    return name.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(name.trim());
-  };
+  const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const validatePhone = (v: string) => /^[\+]?[1-9][\d]{0,15}$/.test(v.replace(/[\s\-\(\)]/g, ""));
+  const validateName = (v: string) => v.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(v.trim());
 
   const formatBudget = (amount: string): string => {
     const num = parseFloat(amount);
     if (isNaN(num)) return "";
-
-    if (num >= 10000000) {
-      return `₹${(num / 10000000).toFixed(1)} Crores`;
-    } else if (num >= 100000) {
-      return `₹${(num / 100000).toFixed(1)} Lakhs`;
-    } else if (num >= 1000) {
-      return `₹${(num / 1000).toFixed(1)}K`;
-    } else {
-      return `₹${num.toLocaleString()}`;
-    }
+    if (num >= 10000000) return `₹${(num / 10000000).toFixed(1)} Crores`;
+    if (num >= 100000) return `₹${(num / 100000).toFixed(1)} Lakhs`;
+    if (num >= 1000) return `₹${(num / 1000).toFixed(1)}K`;
+    return `₹${num.toLocaleString()}`;
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: { [key: string]: string } = {};
-
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (!validateName(formData.name)) {
-      newErrors.name =
-        "Name must be at least 2 characters and contain only letters";
-    }
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    // Phone validation (optional but if provided, must be valid)
-    if (formData.phone.trim() && !validatePhone(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number";
-    }
-
-    // Company validation (optional but if provided, must be valid)
-    if (formData.company.trim() && formData.company.trim().length < 2) {
-      newErrors.company = "Company name must be at least 2 characters";
-    }
-
-    // Business type validation
-    if (!formData.businessType) {
-      newErrors.businessType = "Please select a business type";
-    }
-
-    // Budget validation
-    if (!formData.budget) {
-      newErrors.budget = "Please enter your budget";
-    } else if (parseFloat(formData.budget) < 1000) {
-      newErrors.budget = "Minimum budget should be ₹1,000";
-    }
-
-    // Problem validation
-    if (!formData.problem.trim()) {
-      newErrors.problem = "Please describe your project or problem";
-    } else if (formData.problem.trim().length < 10) {
-      newErrors.problem =
-        "Please provide more details (at least 10 characters)";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateForm = () => {
+    const e: Record<string, string> = {};
+    if (!formData.name.trim() || !validateName(formData.name)) e.name = "Name must be at least 2 characters (letters only)";
+    if (!formData.email.trim() || !validateEmail(formData.email)) e.email = "Please enter a valid email address";
+    if (formData.phone.trim() && !validatePhone(formData.phone)) e.phone = "Please enter a valid phone number";
+    if (!formData.businessType) e.businessType = "Please select a business type";
+    if (!formData.budget) e.budget = "Please enter your budget";
+    else if (parseFloat(formData.budget) < 1000) e.budget = "Minimum budget should be ₹1,000";
+    if (!formData.problem.trim() || formData.problem.trim().length < 10) e.problem = "Please describe your project (at least 10 characters)";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate form before submission
-    if (!validateForm()) {
-      return;
-    }
-
+  const handleSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!validateForm()) return;
     setIsSubmitting(true);
-
     try {
-      // Format budget for WhatsApp message
-      const formattedBudget = formData.budget
-        ? formatBudget(formData.budget)
-        : formData.budget;
-
-      // Open WhatsApp with formatted message
       openWhatsApp({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        businessType: formData.businessType,
-        budget: formattedBudget,
-        problem: formData.problem,
-        projectType: "Custom Software",
+        name: formData.name, email: formData.email, phone: formData.phone,
+        company: formData.company, businessType: formData.businessType,
+        budget: formData.budget ? formatBudget(formData.budget) : formData.budget,
+        problem: formData.problem, projectType: "Custom Software",
       });
-
       setSubmitStatus("success");
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        businessType: "",
-        budget: "",
-        problem: "",
-      });
-
-      // Show success message
-      console.log("WhatsApp opened successfully with form details");
-    } catch (error) {
-      console.error("Error opening WhatsApp:", error);
+      setFormData({ name: "", email: "", phone: "", company: "", businessType: "", budget: "", problem: "" });
+    } catch {
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -160,442 +62,238 @@ const ContactForm: React.FC = () => {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
-    }
+    setFormData(p => ({ ...p, [name]: value }));
+    if (errors[name]) setErrors(p => ({ ...p, [name]: "" }));
   };
 
-  const clearError = (fieldName: string) => {
-    if (errors[fieldName]) {
-      setErrors({
-        ...errors,
-        [fieldName]: "",
-      });
-    }
-  };
+  const clearError = (field: string) => setErrors(p => ({ ...p, [field]: "" }));
 
-  const openCalendly = () => {
-    window.open(
-      "https://calendly.com/team-dev-epicforgesoftware/30min",
-      "_blank"
-    );
-  };
+  const inputCls = (field: string) =>
+    `w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all text-sm ${
+      errors[field]
+        ? "border-red-500/50 focus:ring-red-500/50"
+        : "focus:ring-indigo-500/50"
+    }`;
+
+  const inputStyle = (field: string): React.CSSProperties => ({
+    background: "rgba(15, 23, 42, 0.8)",
+    border: `1px solid ${errors[field] ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.08)"}`,
+  });
+
+  const ErrorMsg: React.FC<{ field: string }> = ({ field }) =>
+    errors[field] ? (
+      <div className="flex items-center mt-1.5 text-red-400 text-xs gap-1">
+        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+        <span>{errors[field]}</span>
+        <button type="button" onClick={() => clearError(field)} className="ml-auto hover:text-red-300">
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+    ) : null;
 
   return (
-    <section
-      id="contact"
-      className="py-24 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden"
-    >
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')]"></div>
-      </div>
+    <section id="contact" className="py-24 relative overflow-hidden" style={{ background: "#0f172a" }}>
+      <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(99,102,241,0.04)_1px,transparent_1px)] bg-[size:28px_28px] pointer-events-none" />
+
+      {/* Ambient */}
+      <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(99,102,241,0.10)" }} />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: "rgba(139,92,246,0.10)" }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-14"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-6"
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6"
+            style={{ background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.25)" }}
           >
-            <Send className="w-4 h-4" />
-            <span>Get In Touch</span>
-          </motion.div>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <Send className="w-4 h-4 text-indigo-400" />
+            <span className="text-sm font-semibold text-indigo-300">Get In Touch</span>
+          </div>
+          <h2
+            className="font-black text-white mb-5 leading-tight tracking-tight"
+            style={{ fontSize: "clamp(1.8rem, 4vw, 3.5rem)" }}
+          >
             Ready to Transform Your Business?
           </h2>
-
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Get your custom AI solution or software build. Choose your preferred
-            way to connect.
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            Get your custom AI solution or software build. Choose your preferred way to connect.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Quick Actions */}
+        <div className="grid lg:grid-cols-2 gap-10">
+          {/* Left: Quick actions */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-8"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="space-y-6"
           >
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-6">
-                Quick Connect
-              </h3>
-
-              <div className="space-y-4">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group relative overflow-hidden rounded-2xl"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <button className="relative w-full bg-transparent text-white p-6 font-semibold text-lg shadow-2xl flex items-center space-x-4">
-                    <Bot className="w-8 h-8" />
-                    <div className="text-left">
-                      <div className="text-xl">{t("hero.ctaAI")}</div>
-                      <div className="text-sm opacity-90">
-                        {t("hero.ctaAISubtext")}
-                      </div>
-                    </div>
-                  </button>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="group"
-                >
-                  <button
-                    onClick={openCalendly}
-                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white p-6 rounded-2xl font-semibold text-lg hover:bg-white/20 hover:border-white/50 transition-all duration-300 flex items-center space-x-4"
-                  >
-                    <Calendar className="w-8 h-8" />
-                    <div className="text-left">
-                      <div className="text-xl">{t("hero.ctaCall")}</div>
-                      <div className="text-sm opacity-90">
-                        {t("hero.ctaCallSubtext")}
-                      </div>
-                    </div>
-                  </button>
-                </motion.div>
-              </div>
-            </div>
+            <h3 className="text-xl font-bold text-white mb-6">Quick Connect</h3>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+              whileHover={{ scale: 1.02, y: -2 }}
+              className="group relative overflow-hidden rounded-2xl shadow-md cursor-pointer"
             >
-              <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-400" />
+              <div
+                className="absolute inset-0"
+                style={{ background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)" }}
+              />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }} />
+              <div className="relative text-white p-6 flex items-center gap-4">
+                <Bot className="w-8 h-8 flex-shrink-0" />
+                <div>
+                  <div className="text-lg font-bold">{t("hero.ctaAI")}</div>
+                  <div className="text-sm text-white/80">{t("hero.ctaAISubtext")}</div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              onClick={() => window.open("https://calendly.com/adityavardhan-epicforgesoftware/30min", "_blank")}
+              className="w-full p-6 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-4 text-left group"
+              style={{
+                background: "rgba(17, 24, 39, 0.9)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(99,102,241,0.35)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+            >
+              <Calendar className="w-8 h-8 text-indigo-400 flex-shrink-0" />
+              <div>
+                <div className="text-lg font-bold text-white">{t("hero.ctaCall")}</div>
+                <div className="text-sm text-slate-400">{t("hero.ctaCallSubtext")}</div>
+              </div>
+            </motion.button>
+
+            <div
+              className="rounded-2xl p-6"
+              style={{ background: "rgba(17,24,39,0.9)", border: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <h4 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-emerald-400" />
                 Free Strategy Call Includes:
               </h4>
-              <ul className="text-gray-300 space-y-3">
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
-                  Bottleneck analysis for your business
-                </li>
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-                  Custom AI/software recommendations
-                </li>
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
-                  Clear project scope and timeline
-                </li>
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
-                  Transparent pricing discussion
-                </li>
+              <ul className="space-y-3">
+                {[
+                  { text: "Bottleneck analysis for your business", color: "#818cf8" },
+                  { text: "Custom AI/software recommendations", color: "#a78bfa" },
+                  { text: "Clear project scope and timeline", color: "#34d399" },
+                  { text: "Transparent pricing discussion", color: "#fbbf24" },
+                ].map(({ text, color }, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                    {text}
+                  </li>
+                ))}
               </ul>
-            </motion.div>
+            </div>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Right: Form */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold text-white mb-6">
-                Send Us Details
-              </h3>
+            <div
+              className="rounded-2xl p-8"
+              style={{ background: "rgba(17,24,39,0.9)", border: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <h3 className="text-xl font-bold text-white mb-6">Send Us Details</h3>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder={t("form.name")}
-                      required
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
-                        errors.name
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    />
-                    {errors.name && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("name")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <input type="text" name="name" value={formData.name} onChange={handleChange}
+                      placeholder={t("form.name")} required className={inputCls("name")} style={inputStyle("name")} />
+                    <ErrorMsg field="name" />
                   </div>
                   <div>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder={t("form.email")}
-                      required
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
-                        errors.email
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    />
-                    {errors.email && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.email}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("email")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <input type="email" name="email" value={formData.email} onChange={handleChange}
+                      placeholder={t("form.email")} required className={inputCls("email")} style={inputStyle("email")} />
+                    <ErrorMsg field="email" />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder={t("form.phone")}
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
-                        errors.phone
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    />
-                    {errors.phone && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.phone}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("phone")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                      placeholder={t("form.phone")} className={inputCls("phone")} style={inputStyle("phone")} />
+                    <ErrorMsg field="phone" />
                   </div>
                   <div>
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      placeholder={t("form.company")}
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
-                        errors.company
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    />
-                    {errors.company && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.company}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("company")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <input type="text" name="company" value={formData.company} onChange={handleChange}
+                      placeholder={t("form.company")} className={inputCls("company")} style={inputStyle("company")} />
+                    <ErrorMsg field="company" />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <select
-                      name="businessType"
-                      value={formData.businessType}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm ${
-                        errors.businessType
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    >
-                      <option value="" className="bg-gray-800">
-                        {t("form.businessType")}
-                      </option>
-                      <option value="health" className="bg-gray-800">
-                        Health
-                      </option>
-                      <option value="saas" className="bg-gray-800">
-                        SaaS
-                      </option>
-                      <option value="legal" className="bg-gray-800">
-                        Legal
-                      </option>
-                      <option value="retail" className="bg-gray-800">
-                        Retail
-                      </option>
-                      <option value="auto" className="bg-gray-800">
-                        Auto
-                      </option>
-                      <option value="logistics" className="bg-gray-800">
-                        Logistics
-                      </option>
-                      <option value="other" className="bg-gray-800">
-                        Other
-                      </option>
+                    <select name="businessType" value={formData.businessType} onChange={handleChange}
+                      className={inputCls("businessType")} style={inputStyle("businessType")}>
+                      <option value="" style={{ background: "#0f172a" }}>{t("form.businessType")}</option>
+                      {["health","saas","legal","retail","auto","logistics","other"].map(v => (
+                        <option key={v} value={v} style={{ background: "#0f172a" }}>{v.charAt(0).toUpperCase() + v.slice(1)}</option>
+                      ))}
                     </select>
-                    {errors.businessType && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.businessType}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("businessType")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <ErrorMsg field="businessType" />
                   </div>
                   <div>
-                    <input
-                      type="number"
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleChange}
-                      placeholder="Enter your budget (e.g., 50000)"
-                      className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-sm placeholder-gray-400 ${
-                        errors.budget
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/30 focus:ring-blue-500"
-                      }`}
-                    />
+                    <input type="number" name="budget" value={formData.budget} onChange={handleChange}
+                      placeholder="Budget (e.g. 50000)" className={inputCls("budget")} style={inputStyle("budget")} />
                     {formData.budget && (
-                      <div className="mt-2 text-sm text-cyan-400">
-                        {formatBudget(formData.budget)}
-                      </div>
+                      <div className="mt-1.5 text-xs font-semibold text-indigo-400">{formatBudget(formData.budget)}</div>
                     )}
-                    {errors.budget && (
-                      <div className="flex items-center mt-2 text-red-400 text-sm">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        <span>{errors.budget}</span>
-                        <button
-                          type="button"
-                          onClick={() => clearError("budget")}
-                          className="ml-2 hover:text-red-300"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                    <ErrorMsg field="budget" />
                   </div>
                 </div>
 
                 <div>
-                  <textarea
-                    name="problem"
-                    value={formData.problem}
-                    onChange={handleChange}
-                    placeholder={t("form.problem")}
-                    rows={4}
-                    className={`w-full px-4 py-3 bg-white/20 border rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:border-transparent resize-none backdrop-blur-sm ${
-                      errors.problem
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-white/30 focus:ring-blue-500"
-                    }`}
-                  />
-                  {errors.problem && (
-                    <div className="flex items-center mt-2 text-red-400 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      <span>{errors.problem}</span>
-                      <button
-                        type="button"
-                        onClick={() => clearError("problem")}
-                        className="ml-2 hover:text-red-300"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
+                  <textarea name="problem" value={formData.problem} onChange={handleChange}
+                    placeholder={t("form.problem")} rows={4}
+                    className={`${inputCls("problem")} resize-none`} style={inputStyle("problem")} />
+                  <ErrorMsg field="problem" />
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  disabled={
-                    isSubmitting ||
-                    Object.keys(errors).some((key) => errors[key])
-                  }
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting}
+                  className="w-full py-4 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden relative"
+                  style={{
+                    background: "linear-gradient(135deg, #059669 0%, #0891b2 100%)",
+                    boxShadow: "0 6px 24px rgba(5,150,105,0.25)",
+                  }}
                 >
-                  <Send className="w-5 h-5" />
-                  <span>
-                    {isSubmitting ? t("form.submitting") : t("form.submit")}
-                  </span>
+                  <Send className="w-4 h-4" />
+                  {isSubmitting ? t("form.submitting") : t("form.submit")}
+                  <ArrowRight className="w-4 h-4" />
                 </motion.button>
 
                 {submitStatus === "success" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center space-x-2 text-green-400 bg-green-400/10 p-3 rounded-lg border border-green-400/20"
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    <span>{t("form.success")}</span>
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 text-emerald-400 p-3.5 rounded-xl border text-sm font-medium"
+                    style={{ background: "rgba(5,150,105,0.12)", borderColor: "rgba(5,150,105,0.25)" }}>
+                    <CheckCircle className="w-4 h-4" /> {t("form.success")}
                   </motion.div>
                 )}
-
                 {submitStatus === "error" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center space-x-2 text-red-400 bg-red-400/10 p-3 rounded-lg border border-red-400/20"
-                  >
-                    <AlertCircle className="w-5 h-5" />
-                    <span>{t("form.error")}</span>
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 text-red-400 p-3.5 rounded-xl border text-sm font-medium"
+                    style={{ background: "rgba(239,68,68,0.12)", borderColor: "rgba(239,68,68,0.25)" }}>
+                    <AlertCircle className="w-4 h-4" /> {t("form.error")}
                   </motion.div>
                 )}
               </form>
