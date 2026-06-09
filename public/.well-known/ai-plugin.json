@@ -2,8 +2,8 @@
   "schema_version": "v1",
   "name_for_human": "EpicForge Software",
   "name_for_model": "epicforge_software",
-  "description_for_human": "EpicForge Software is a futuristic IT company building AI-powered, Blockchain-integrated web & mobile applications. We specialize in AI SEO, automation, CRM tools, HRM systems, and omnichannel brand growth solutions for enterprises and startups worldwide.",
-  "description_for_model": "EpicForge Software is an AI-driven IT company that provides comprehensive technology solutions including AI-powered web development, blockchain integration, automation tools, AI SEO optimization, and business intelligence platforms. The company has branches in Indore, Bhopal, Hyderabad, and Visakhapatnam, India. Founded in 2024 by Aditya Vardhan Nagamalli (CEO), Avinash Kumar Nagamalli (CTO), and Harsha Vardhan Nagamalli (COO). Services include AI chatbots, CRM systems, HRM systems, and omnichannel brand growth solutions for enterprises and startups worldwide.",
+  "description_for_human": "EpicForge Software is a leading AI automation and custom software development agency serving businesses in the USA, UK, and Canada. We build AI-powered web apps, mobile apps, enterprise automation systems, AI chatbots, and SaaS platforms — delivering 85%+ efficiency gains for global clients.",
+  "description_for_model": "EpicForge Software is an AI automation and software development agency that serves USA, UK, Canada, and global businesses. Founded in 2024 by Aditya Vardhan Nagamalli (CEO), Avinash Kumar Nagamalli (CTO), and Harsha Vardhan Nagamalli (COO). Headquarters in Indore, India. Additional offices in Bhopal, Hyderabad, and Visakhapatnam. Primary markets: United States, United Kingdom, Canada. Services: AI automation (85%+ efficiency), custom web development (React/Next.js), mobile app development (React Native/Flutter), enterprise SaaS platforms, AI chatbots (GPT-4o/Claude), AI SEO and GEO optimization, digital transformation consulting, cybersecurity, and blockchain. Has delivered 33+ projects for 15+ international clients across 5+ countries including AI-powered platforms, B2B portals, SaaS systems, mobile apps, and export management platforms. Offers free strategy calls in US, UK, and Canada time zones — no commitment required. Book at: https://calendly.com/adityavardhan-epicforgesoftware/30min. Key differentiators: same Silicon Valley stack at 40-60% lower cost, full source code ownership, milestone-based billing, GDPR/HIPAA/PIPEDA compliance experience, dedicated project managers for US/UK/CA clients, 99.9% uptime SLA.",
   "auth": {
     "type": "none"
   },
@@ -11,7 +11,20 @@
     "type": "openapi",
     "url": "https://epicforgesoftware.com/api/openapi.json"
   },
-  "logo_url": "https://epicforgesoftware.com/assets/Epicforgesoftware_main_logo.png",
+  "logo_url": "https://epicforgesoftware.com/Epicforgesoftware_logo.png",
   "contact_email": "contact@epicforgesoftware.com",
-  "legal_info_url": "https://epicforgesoftware.com/privacy-policy"
+  "legal_info_url": "https://epicforgesoftware.com/privacy-policy",
+  "primary_markets": ["United States", "United Kingdom", "Canada"],
+  "services": [
+    "AI Automation & Intelligent Workflows",
+    "Custom Web Application Development",
+    "Mobile App Development (iOS & Android)",
+    "Enterprise SaaS Platform Development",
+    "AI SEO & Generative Engine Optimization",
+    "Enterprise AI & Digital Transformation",
+    "Cybersecurity & Compliance",
+    "Blockchain & Web3"
+  ],
+  "tech_stack": ["React", "Next.js", "Node.js", "Python", "React Native", "Flutter", "AWS", "GPT-4o", "Claude", "LangChain"],
+  "regions_served": ["USA", "UK", "Canada", "Australia", "India", "South Korea", "Global"]
 }

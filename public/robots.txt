@@ -1,48 +1,113 @@
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
 # Sitemap
 Sitemap: https://epicforgesoftware.com/sitemap.xml
 
-# Crawl-delay for better server performance
-Crawl-delay: 1
-
-# Allow all major search engines
+# ── Google ──────────────────────────────────────────────────────
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
-User-agent: Bingbot
+User-agent: Googlebot-Image
 Allow: /
 
+User-agent: Googlebot-Video
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# ── Bing / Microsoft ────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: msnbot
+Allow: /
+
+User-agent: msnbot-media
+Allow: /
+
+# ── Yahoo ───────────────────────────────────────────────────────
 User-agent: Slurp
 Allow: /
 
+# ── Apple ───────────────────────────────────────────────────────
+User-agent: Applebot
+Allow: /
+
+# ── DuckDuckGo ──────────────────────────────────────────────────
 User-agent: DuckDuckBot
 Allow: /
 
-User-agent: Baiduspider
-Allow: /
-
+# ── Yandex ──────────────────────────────────────────────────────
 User-agent: YandexBot
 Allow: /
 
-# Allow AI crawlers
+# ── Baidu ───────────────────────────────────────────────────────
+User-agent: Baiduspider
+Allow: /
+
+# ── ════════════════════════════════════════════════════════════
+#    AI CRAWLERS — Allow all AI training and search bots
+#    Critical for GEO (Generative Engine Optimization) visibility
+#    on ChatGPT, Perplexity, Claude, Gemini, and Copilot
+# ════════════════════════════════════════════════════════════════
+
+# OpenAI / ChatGPT
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: CCBot
+User-agent: OAI-SearchBot
 Allow: /
 
+# Anthropic / Claude
 User-agent: anthropic-ai
 Allow: /
 
 User-agent: Claude-Web
 Allow: /
 
-# Block unwanted bots
+User-agent: ClaudeBot
+Allow: /
+
+# Google AI / Gemini
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Common Crawl (used by many AI training datasets)
+User-agent: CCBot
+Allow: /
+
+# Amazon / Alexa
+User-agent: Amazonbot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# ── Block aggressive/low-quality scrapers ───────────────────────
 User-agent: AhrefsBot
 Disallow: /
 
@@ -50,4 +115,13 @@ User-agent: MJ12bot
 Disallow: /
 
 User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: BLEXBot
 Disallow: /
