@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Mail,
   MapPin,
@@ -13,12 +14,14 @@ import {
   Bot,
   Phone,
   Shield,
+  FileText,
 } from "lucide-react";
 import LanguageDropdown from "./LanguageDropdown";
 import EpicForgeLogo from "../assets/images/Epicforgesoftware_main_logo.png";
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -116,12 +119,22 @@ const Footer: React.FC = () => {
                   <span>info@epicforgesoftware.com</span>
                 </div>
                 <div className="flex items-start space-x-3 text-gray-400">
-                  <MapPin className="w-4 h-4 text-purple-400 mt-1" />
-                  <div className="text-sm">
-                    <div className="font-medium text-white mb-1">
-                      {t("footer.branches")}
+                  <MapPin className="w-4 h-4 text-purple-400 mt-1 flex-shrink-0" />
+                  <div className="text-sm space-y-2.5">
+                    <div>
+                      <div className="font-medium text-white mb-0.5 flex items-center gap-1.5">
+                        <span>🇮🇳</span>
+                        {t("footer.branches")}
+                      </div>
+                      <div className="text-gray-400">{t("footer.branchesText")}</div>
                     </div>
-                    <div>{t("footer.branchesText")}</div>
+                    <div>
+                      <div className="font-medium text-white mb-0.5 flex items-center gap-1.5">
+                        <span>🇺🇸</span>
+                        {t("footer.usAreas")}
+                      </div>
+                      <div className="text-gray-400">{t("footer.usAreasText")}</div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -138,22 +151,21 @@ const Footer: React.FC = () => {
               </h3>
               <div className="space-y-3">
                 {[
-                  { key: "home", section: "hero", icon: Home },
-                  { key: "services", section: "features", icon: Briefcase },
-                  { key: "ai-tools", section: "features", icon: Bot },
-                  { key: "contact", section: "contact", icon: Phone },
-                  { key: "privacy", section: "privacy", icon: Shield },
+                  { key: "Home",           icon: Home,      action: () => scrollToSection("hero") },
+                  { key: "Services",       icon: Briefcase, action: () => scrollToSection("features") },
+                  { key: "AI Tools",       icon: Bot,       action: () => scrollToSection("features") },
+                  { key: "Contact",        icon: Phone,     action: () => scrollToSection("contact") },
+                  { key: "Privacy Policy", icon: Shield,    action: () => navigate("/privacy-policy") },
+                  { key: "Terms",          icon: FileText,  action: () => navigate("/terms") },
                 ].map((item) => (
                   <motion.button
                     key={item.key}
                     whileHover={{ x: 5 }}
-                    onClick={() => scrollToSection(item.section)}
+                    onClick={item.action}
                     className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors duration-200 text-left"
                   >
                     <item.icon className="w-4 h-4" />
-                    <span className="capitalize">
-                      {item.key.replace("-", " ")}
-                    </span>
+                    <span>{item.key}</span>
                   </motion.button>
                 ))}
               </div>
@@ -223,7 +235,7 @@ const Footer: React.FC = () => {
             className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center"
           >
             <p className="text-gray-400 text-sm mb-4 md:mb-0 text-center md:text-left">
-              © 2025 EpicForge Software. All Rights Reserved.
+              © 2026 EpicForge Software. All Rights Reserved.
             </p>
 
             <div className="flex items-center space-x-6">

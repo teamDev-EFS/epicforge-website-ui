@@ -19,6 +19,8 @@ import ContactPage from "./pages/ContactPage";
 import HelpPage from "./pages/HelpPage";
 import BlogPage from "./pages/BlogPage";
 import CaseStudyDetailPage from "./pages/CaseStudyDetailPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
 import GlobalVoiceSearch from "./components/GlobalVoiceSearch";
 import FloatingCTA from "./components/FloatingCTA";
 import CalendlyModal from "./components/CalendlyModal";
@@ -86,6 +88,8 @@ function AppInner() {
           <Route path="/help" element={<HelpPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/case-studies/:id" element={<CaseStudyDetailPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
         <Footer />
         <AdvancedAIChat />
